@@ -39,14 +39,16 @@ help <- function( all_fields=NULL, package_name=NULL, function_name=NULL,
     topicExpr <- substitute(e2)
   }
   
+  # Capture the "??" situation and do a global search 
+  search <- (is.call(topicExpr) && topicExpr[[1L]] == "?")
+  
+  if(search){
+    return( help( topicExpr[[2L]] ) )
+  }
+  
   if(substr(as.character(topicExpr),2,2)[[1]]=="?"){
     topicExpr <- substr(as.character(topicExpr),3,nchar(topicExpr)) 
   }
   
   get_help(as.character(topicExpr))
-}
-
-
-`??` = function(){
-  print("awesome!")
 }
