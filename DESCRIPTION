@@ -3,7 +3,7 @@ Type: Package
 Title: Integrate R with Rdocumentation.org
 Version: 0.1
 Date: 2013-07-26
-Author: Jonathan Cornelissen
+Author: Jonathan Cornelissen (for Rdocumentation.org)
 Maintainer: Jonathan Cornelissen <Jonathan@datamind.org>
-Description: Integrate R with Rdocumentation.org
+Description: Enhance the search/help functionality in R with Rdocumentation.org
 License:  GPL (>= 2)
