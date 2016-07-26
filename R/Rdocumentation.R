@@ -99,6 +99,7 @@ whatever <-function (pattern, fields = c("alias", "concept", "title"), apropos,
 {
     hsearch_db_fields <-c("alias", "concept", "keyword", "name", "title")
     hsearch_db_types <- c("help", "vignette", "demo")
+    elas_search_db_fields <-c("aliases","concept","keywords","name","title")
     .wrong_args <- function(args) gettextf("argument %s must be a single character string", 
         sQuote(args))
     #FALSE = 0, TRUE = 2
@@ -260,13 +261,17 @@ whatever <-function (pattern, fields = c("alias", "concept", "title"), apropos,
             "matched %d objects locally."), n_of_objects_matched), domain = NA)
         flush.console()
     }
-    print(db)
+    print(db$Concepts)
     print(length(unique(db[,"ID"])))
+    lapply(fields,function(e){
+        return (elas_search_db_fields[which(hsearch_db_fields==e)])
+        })
+    print(fields)
     if(length(unique(db[,"ID"])) == 1){
-        go_to_url=paste0(rdocs_package_url(),"packages/",as.character(db[,"Package"][1]),"/versions/",as.character(packageVersion(db[,"Package"][1])),"/topics/",db[,"Topic"][1])
+        go_to_url=URLencode(paste0(rdocs_package_url(),"packages/",as.character(db[,"Package"][1]),"/versions/",as.character(packageVersion(db[,"Package"][1])),"/topics/",db[,"Topic"][1]))
     }
     else if(length(unique(db[,"ID"])) > 1) {
-        go_to_url = paste0(rdocs_package_url(),"topics/",as.character(gsub(" ", "", toString(unique(db[,"Topic"])), fixed = TRUE)),"/packages/",as.character(gsub(" ", "", toString(unique(db[,"Package"])), fixed = TRUE)),"/help")
+        go_to_url = URLencode(paste0(rdocs_package_url(),"topics/",as.character(gsub(" ", "", toString(unique(db[,"Topic"])), fixed = TRUE)),"/packages/",as.character(gsub(" ", "", toString(unique(db[,"Package"])), fixed = TRUE)),"/help"))
     }
     else{
         if (verbose >= 2L) {
@@ -276,7 +281,7 @@ whatever <-function (pattern, fields = c("alias", "concept", "title"), apropos,
         if(max.distance<1){
             max.distance = ceiling(max.distance*nchar(pattern))
         }
-        go_to_url = paste0(rdocs_url(),as.character(pattern),"/",as.character(gsub(" ", "", toString(fields), fixed = TRUE)),"/",as.character(fuzzy),"/",as.character(max.distance),"/",as.character(ignore.case),"/ordered")
+        go_to_url = URLencode(paste0(rdocs_url(),as.character(pattern),"/",as.character(gsub(" ", "", toString(fields), fixed = TRUE)),"/",as.character(fuzzy),"/",as.character(max.distance),"/",as.character(ignore.case),"/ordered"))
     }
     print(go_to_url)
     if (verbose >= 2L) {
