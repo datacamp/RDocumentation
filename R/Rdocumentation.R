@@ -7,82 +7,89 @@ rdocs_package_url=function(){
 }
 
 help <- function(topic,package=NULL,try.all.packages = getOption("help.try.all.packages")){
-  ischar <- tryCatch(is.character(topic) && length(topic) == 
+    ischar <- tryCatch(is.character(topic) && length(topic) == 
         1L, error = identity)
-  if (inherits(ischar, "error")) 
+    if (inherits(ischar, "error")) 
       ischar <- FALSE
-  if (!ischar) {
-      reserved <- c("TRUE", "FALSE", "NULL", "Inf", "NaN", 
+    if (!ischar) {
+        reserved <- c("TRUE", "FALSE", "NULL", "Inf", "NaN", 
           "NA", "NA_integer_", "NA_real_", "NA_complex_", "NA_character_")
-      stopic <- deparse(substitute(topic))
-      if (!is.name(substitute(topic)) && !stopic %in% reserved) 
+        stopic <- deparse(substitute(topic))
+        if (!is.name(substitute(topic)) && !stopic %in% reserved) 
           stop("'topic' should be a name")
-      if(!stopic %in% reserved){
+        if(!stopic %in% reserved){
         topic <- stopic
-      }      
-  }
-  ischar <- tryCatch(is.character(package) && length(topic) == 
+        }      
+    }
+    ischar <- tryCatch(is.character(package) && length(topic) == 
         1L, error = identity)
     if (inherits(ischar, "error")) 
         ischar <- FALSE
     if (!ischar) {
-      reserved <- c("TRUE", "FALSE", "NULL", "Inf", "NaN", 
+        reserved <- c("TRUE", "FALSE", "NULL", "Inf", "NaN", 
           "NA", "NA_integer_", "NA_real_", "NA_complex_", "NA_character_")
         spackage <- deparse(substitute(package))
         if (!is.name(substitute(package))&& !spackage %in% reserved) 
-          stop("'package' should be a name")
+            stop("'package' should be a name")
         if(!spackage %in% reserved){
-          package<-spackage   
+            package<-spackage   
         }          
     }
-  if ((!is.null(topic)) && is.null(package) &&  try.all.packages==FALSE) {
-      for (p in search()){
-        if(topic %in% ls(pos=p)){
-            package = as.character(p)
-        
-      }
-    }
-  }
-  else if(is.null(package) && try.all.packages){
-    packages=c()
-    for (lib in .libPaths()) {
-            packages <- c(packages,.packages(TRUE, lib))
+    if ((!is.null(topic)) && is.null(package) &&  try.all.packages==FALSE) {
+        for (p in search()){
+            if(topic %in% ls(pos=p)){
+                package = as.character(p)
+
+            }
         }
-  }
-  else if(!is.null(package)){
+    }
+    else if(is.null(package) && try.all.packages){
+        packages=c()
+        for (lib in .libPaths()) {
+                packages <- c(packages,.packages(TRUE, lib))
+            }
+        }
+    else if(!is.null(package)){
      
-  }
-  if(!is.null(topic)){
-    if(!is.null(package)){
-      go_to_url=paste0(rdocs_url(),as.character(topic),"/",as.character(package),"/ordered")
     }
-    else if(try.all.packages){
-      array =""
-      for(p in packages){
-        array = paste0(array,p,",")
-      }
-      array = substr(array,1,nchar(array)-1)  
-      go_to_url=paste0(rdocs_url(),as.character(topic),"/",array,"/ordered")
+    if(!is.null(topic)){
+        if(!is.null(package)){
+            post<-TRUE
+            go_to_url=paste0(rdocs_url(),"alias/help")
+            body = paste0('{"alias":"',as.character(topic),'","packages":"',package,'"}')
+        }
+        else if(try.all.packages){
+            array =""
+            for(p in packages){
+                array = paste0(array,p,",")
+            }
+            array = substr(array,1,nchar(array)-1)  
+            post<-TRUE
+            go_to_url=paste0(rdocs_url(),"alias/help")
+            body = paste0('{"alias":"',as.character(topic),'","packages":"',as.character(array),'"}')
+        }
+        else{
+            go_to_url=paste0(rdocs_url(),"alias/help")
+            body = paste0('{"alias":"',as.character(topic),'"}')
+        }
     }
-    else{
-      go_to_url=paste0(rdocs_url(),as.character(topic),"/ordered")
+    else if (!is.null(package)){
+        go_to_url=paste0(rdocs_url(),"alias/help")
+        body = paste0('{"packages":"',as.character(package),'"}')
     }
-  }
-  else if (!is.null(package)){
-    go_to_url=paste0(rdocs_url(),"NULL/",as.character(package),"/ordered")
-  }
-  viewer <- getOption("viewer")
-  if (!is.null(viewer)){
+    viewer <- getOption("viewer")
     tempDir <- tempfile()
     dir.create(tempDir)
     htmlFile <- file.path(tempDir, "index.html")
-    download.file(go_to_url, destfile = htmlFile,method='internal',quiet=TRUE)
-    viewer(htmlFile)
-  }
-  else{
-    utils::browseURL(go_to_url)
-  }
-
+    print(go_to_url)
+    r <- POST(go_to_url,config=(content_type_json()),body =body,encode="json")
+    writeBin(content(r,'raw'),htmlFile)
+    if (!is.null(viewer)){
+        viewer(htmlFile)
+    }
+    else{
+        utils::browseURL(htmlFile)
+    }
 }
 
 `?` <- function (e1, e2=NULL) 
@@ -100,6 +107,7 @@ whatever <-function (pattern, fields = c("alias", "concept", "title"), apropos,
     hsearch_db_fields <-c("alias", "concept", "keyword", "name", "title")
     hsearch_db_types <- c("help", "vignette", "demo")
     elas_search_db_fields <-c("aliases","concept","keywords","name","title")
+    post<-FALSE
     .wrong_args <- function(args) gettextf("argument %s must be a single character string", 
         sQuote(args))
     #FALSE = 0, TRUE = 2
@@ -261,17 +269,16 @@ whatever <-function (pattern, fields = c("alias", "concept", "title"), apropos,
             "matched %d objects locally."), n_of_objects_matched), domain = NA)
         flush.console()
     }
-    print(db$Concepts)
-    print(length(unique(db[,"ID"])))
     lapply(fields,function(e){
         return (elas_search_db_fields[which(hsearch_db_fields==e)])
         })
-    print(fields)
     if(length(unique(db[,"ID"])) == 1){
         go_to_url=URLencode(paste0(rdocs_package_url(),"packages/",as.character(db[,"Package"][1]),"/versions/",as.character(packageVersion(db[,"Package"][1])),"/topics/",db[,"Topic"][1]))
     }
     else if(length(unique(db[,"ID"])) > 1) {
-        go_to_url = URLencode(paste0(rdocs_package_url(),"topics/",as.character(gsub(" ", "", toString(unique(db[,"Topic"])), fixed = TRUE)),"/packages/",as.character(gsub(" ", "", toString(unique(db[,"Package"])), fixed = TRUE)),"/help"))
+        body = paste0('{"topics":"',as.character(gsub(" ", "", toString(unique(db[,"Topic"])), fixed = TRUE)),'","packages":"',as.character(gsub(" ", "", toString(unique(db[,"Package"])), fixed = TRUE)),'"}')
+        go_to_url = URLencode(paste0(rdocs_url(),"topics/help"))
+        post<-TRUE
     }
     else{
         if (verbose >= 2L) {
@@ -293,7 +300,14 @@ whatever <-function (pattern, fields = c("alias", "concept", "title"), apropos,
         tempDir <- tempfile()
         dir.create(tempDir)
         htmlFile <- file.path(tempDir, "index.html")
-        download.file(go_to_url, destfile = htmlFile,method='internal',quiet=TRUE)
+        if(!post){
+            download.file(go_to_url, destfile = htmlFile,method='internal',quiet=TRUE)
+        }
+        else{
+            print(go_to_url)
+            r <- POST(go_to_url,config=(content_type_json()),body =body,encode="json")
+            writeBin(content(r,'raw'),htmlFile)
+        }
         viewer(htmlFile)
     }
     else{
