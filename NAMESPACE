@@ -1,3 +1,7 @@
+importFrom(httr,POST)
+importFrom(proto,proto)
+importFrom(httr,content_type_json)
+importFrom(httr,content)
 export(rdocs_url)
 export(.view_help)
 export(help)

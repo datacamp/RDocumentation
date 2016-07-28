@@ -8,4 +8,4 @@ Maintainer: Jonathan Cornelissen <Jonathan@datamind.org>
 Description: Enhance the search/help functionality in R with Rdocumentation.org
 License:  GPL (>= 2)
 Imports:
-    httr,proto
+    httr,proto,jsonlite
