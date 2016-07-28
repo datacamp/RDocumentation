@@ -1,4 +1,5 @@
-rdocs_url=function(){
+#' @export
+rdocs_url <- function(){
   return("http://localhost:1337/")
 }
 
@@ -20,7 +21,7 @@ rdocs_url=function(){
         '","tried_all_packages":"',as.character(attributes(package)$tried_all_packages),
         '","help_type":"',as.character(attributes(package)$type),
         '"}')
-        go_to_url=paste0(rdocs_url(),"rstudio/normal/help")
+        go_to_url=paste0(Rdocumentation::rdocs_url(),"rstudio/normal/help")
     }
     else{
         hsearch_db_fields <-c("alias", "concept", "keyword", "name", "title")
@@ -38,23 +39,19 @@ rdocs_url=function(){
         '","matching_titles":"',as.character(gsub(" ", "", toString(unique(package$matches$Topic)), fixed = TRUE)),
         '","matching_packages":"',as.character(gsub(" ", "", toString(unique(package$matches$Package)), fixed = TRUE)),
         '"}')
-        go_to_url=paste0(rdocs_url(),"rstudio/search/help")
+        go_to_url=paste0(Rdocumentation::rdocs_url(),"rstudio/search/help")
     }
-    print(body)
     return (.view_help(go_to_url,body,TRUE))
 }
 
 #TODO make a package url that doesn't return JSON
 .browseUrl.help<-function(url,browser){
     parsing = substring(url,18,nchar(url)-18)
-    print(parsing);
     parts = strsplit(parsing,"/")
-    print(parts)
-    go_to_url=paste0(rdocs_url(),"rstudio/package/",parts[[1]][3])
+    go_to_url=paste0(Rdocumentation::rdocs_url(),"rstudio/package/",parts[[1]][3])
     return (.view_help(go_to_url,NULL,FALSE))
 }
 .view_help<-function(go_to_url,body,post){
-    print(go_to_url)
     viewer <- getOption("viewer")
     if (!is.null(viewer)){
         tempDir <- tempfile()
@@ -76,6 +73,11 @@ rdocs_url=function(){
 }
 library(proto)
 #TODO:check if browse_url in subfunction also fails
+#' @export
 help <- with(proto(environment(help), help = utils::help, browseURL = .browseUrl.help,`class<-` = `.class.help<-`),help)
+this.help <- with(proto(environment(help), help = utils::help, browseURL = .browseUrl.help,`class<-` = `.class.help<-`),help)
+#' @export
 help.search <- with(proto(environment(help), help.search = utils::help.search, `class<-` = `.class.help<-`),help.search)
-`?` <- with(proto(environment(`?`), `?` = utils::`?`,help=help,help.search=help.search),`?`)
+this.help.search <- with(proto(environment(help), help.search = utils::help.search, `class<-` = `.class.help<-`),help.search)
+#' @export
+`?` <- with(proto(environment(help), `?` = utils::`?`,help=this.help,help.search=this.help.search),`?`)
