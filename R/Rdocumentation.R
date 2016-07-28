@@ -64,7 +64,7 @@ rdocs_url <- function(){
         else{
             download.file(go_to_url, destfile = htmlFile,method='internal',quiet=TRUE)
         }
-        viewer(htmlFile)
+        viewer(paste0(htmlFile,'?viewer_pane=1&Rstudio_XS_Secret=',as.character(Sys.getenv("RS_SHARED_SECRET")),'&Rstudio_port=',as.character(Sys.getenv("RSTUDIO_SESSION_PORT"))))
     }
     else{
         utils::browseURL(go_to_url)
