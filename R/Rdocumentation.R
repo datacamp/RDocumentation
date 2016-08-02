@@ -116,7 +116,40 @@ check_package <- function(mypkg){
         return (FALSE)
     }
     else{
-        return (TRUE)
+        return (packageVersion(mypkg))
+    }
+} 
+
+#' @export
+install_package <- function(mypkg,type){
+    if(type==1){
+        #CRAN
+        install.packages(mypkg);
+    }
+    else if(type==2){
+        #bioconductor
+        source("https://bioconductor.org/biocLite.R")
+        if(!is.element(mypkg, installed.packages()[,1])){
+            biocLite(c(mypkg))
+        }
+        else{
+            biocLite("BiocUpgrade")
+        }         
+    }
+    else if(type==3){
+        #github,needs url
+        if(!is.element("githubinstall", installed.packages()[,1])){
+            install.packages("githubinstall")
+        }
+        library(githubinstall)
+        githubinstall(mypkg)
+
+    }
+    else if(type==4){
+        print("Can not install this package, you need to upgrade your R installation")
+    }
+    else{
+        print("Something went wrong, could not install this package")
     }
 } 
 
@@ -128,4 +161,4 @@ this.help <- with(proto(environment(help), help = utils::help, browseURL = .brow
 help.search <- with(proto(environment(help), help.search = utils::help.search, `class<-` = `.class.help<-`),help.search)
 this.help.search <- with(proto(environment(help), help.search = utils::help.search, `class<-` = `.class.help<-`),help.search)
 #' @export
-`?` <- with(proto(environment(help), `?` = utils::`?`,help=this.help,help.search=this.help.search),`?`)         
+`?` <- with(proto(environment(help), `?` = utils::`?`,help=this.help,help.search=this.help.search),`?`)             
