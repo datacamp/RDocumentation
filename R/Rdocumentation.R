@@ -64,7 +64,7 @@ login<-function(){
         matching_packages=as.character(gsub(" ", "", toString(unique(package$matches$Package)), fixed = TRUE))))
         go_to_url=paste0(Rdocumentation::rdocs_url(),"rstudio/search/help?viewer_pane=1")
     }
-    return (.view_help(go_to_url,body,TRUE))
+    return (.view_help(go_to_url,body,TRUE,package,value))
 }
 
 #TODO make a package url that doesn't return JSON
@@ -72,9 +72,9 @@ login<-function(){
     parsing = substring(url,18,nchar(url)-18)
     parts = strsplit(parsing,"/")
     go_to_url=paste0(Rdocumentation::rdocs_url(),"rstudio/package/",parts[[1]][3],"?viewer_pane=1")
-    return (.view_help(go_to_url,NULL,FALSE))
+    return (.view_help(go_to_url,NULL,FALSE,url,browser))
 }
-.view_help<-function(go_to_url,body,post){
+.view_help<-function(go_to_url,body,post,arg1,arg2){
     tempDir <- paste0(.libPaths()[1],"/Rdocumentation/doc")
     htmlFile <- file.path(tempDir, "index.html")
     if(!file.exists(tempDir)){
@@ -89,17 +89,22 @@ login<-function(){
             r <- GET(go_to_url)
             writeBin(content(r,'raw'),htmlFile)
         }
+        p <- tools::startDynamicHelp(NA)
+        browser <-  getOption("browser")
+        browseURL(paste0("http://127.0.0.1:", p, "/library/Rdocumentation/doc/index.html?viewer_pane=1&Rstudio_port=",
+            as.character(Sys.getenv("RSTUDIO_SESSION_PORT")),"&RS_SHARED_SECRET=",as.character(Sys.getenv("RS_SHARED_SECRET"))),browser)
+        return (invisible())
     },
     error=function(cond){
-        print(cond);
         print("Could not reach Rdocumentation, either your internet connection is bad or Rdocumentation is offline")
-        return (invisible())
+        if(post){
+            return (baseenv()$`class<-`(arg1,arg2))
+        }
+        else{
+            return(utils::browseURL(arg1,arg2))
+        }        
     })
-    p <- tools::startDynamicHelp(NA)
-    browser <-  getOption("browser")
-    browseURL(paste0("http://127.0.0.1:", p, "/library/Rdocumentation/doc/index.html?viewer_pane=1&Rstudio_port=",
-        as.character(Sys.getenv("RSTUDIO_SESSION_PORT")),"&RS_SHARED_SECRET=",as.character(Sys.getenv("RS_SHARED_SECRET"))),browser)
-    return (invisible())
+    
 }
 #' @export
 check_package <- function(mypkg){
