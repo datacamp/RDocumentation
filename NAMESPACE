@@ -11,4 +11,7 @@ export(help.search)
 export(`?`)
 export(check_package)
 export(login)
+export(hideViewer)
+export(makeDefault)
+export(install_package)
 #exportPattern("^[[:alpha:]]+"); 

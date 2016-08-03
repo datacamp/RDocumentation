@@ -1,9 +1,23 @@
 #' @export
 rdocs_url <- function(){
-  return("http://localhost:1337/")
+  return("http://www.rdocumentation.org/")
 }
 .onLoad<-function(libName,packageName){
     login()
+    #locate Rprofile file
+        #search it for Rdocumentation
+    Rprofile<-.getRProfile()
+    names <- scan(Rprofile, what=character(),quiet=TRUE)
+    if(length(grep("Rdocumentation",names))==0){
+        .view_help(paste0(rdocs_url(),"rstudio/make_default"),"DEFAULT",FALSE,"","")
+    }
+}
+.getRProfile<-function(){
+    if(!file.exists(file.path(Sys.getenv("HOME"),".Rprofile"))){
+        file.create(file.path(Sys.getenv("HOME"),".Rprofile"),quiet=TRUE)
+    }
+    Rprofile<-file.path(Sys.getenv("HOME"),".Rprofile")
+    return (Rprofile)
 }
 #' @export
 login<-function(){
@@ -17,21 +31,32 @@ login<-function(){
         tryCatch({
                 r <- POST(go_to_url,body=as.character(creds$V1),content_type("application/x-www-form-urlencoded"))
                 if(status_code(r)!=200){
-                    print("there is something wrong with your credentials, please try logging in to the syte in the help panel")
+                    packageStartupMessage("there is something wrong with your credentials, please try logging in to the syte in the help panel")
                 }
                 else{
-                    print("logging you in to Rdocumentation")
+                    packageStartupMessage("logging you in to Rdocumentation")
                 }
             },
             error=function(cond){
                 print(cond)
-                print("Could not log you in, something is wrong with your internet connection or Rdocumentation is offline")
+                packageStartupMessage("Could not log you in, something is wrong with your internet connection or Rdocumentation is offline")
             }
         )
     }
     else{
          dir.create(paste0(.libPaths()[1],"/Rdocumentation/config"),showWarnings = FALSE,recursive=TRUE)
     }
+
+}
+#' @export
+makeDefault<-function(){
+    Rprofile<-.getRProfile()
+    write("options(defaultPackages = c(getOption('defaultPackages'), 'Rdocumentation'))" ,file=Rprofile,append=TRUE)
+    return (invisible())
+}
+#' @export
+hideViewer<-function(){
+    help(package=Rdocumentation)
 }
 
 #overwrites the class<- function, converts help answers to json and sends them to Rdocumentation
@@ -72,7 +97,7 @@ login<-function(){
     parsing = substring(url,18,nchar(url)-18)
     parts = strsplit(parsing,"/")
     go_to_url=paste0(Rdocumentation::rdocs_url(),"rstudio/package/",parts[[1]][3],"?viewer_pane=1")
-    return (.view_help(go_to_url,NULL,FALSE,url,browser))
+    return (.view_help(go_to_url,"",FALSE,url,browser))
 }
 .view_help<-function(go_to_url,body,post,arg1,arg2){
     tempDir <- paste0(.libPaths()[1],"/Rdocumentation/doc")
@@ -83,17 +108,23 @@ login<-function(){
     tryCatch({
         if(post){
             r <- POST(go_to_url,config=(content_type_json()),body =body,encode="json")
-            writeBin(content(r,'raw'),htmlFile)
         }
         else{
             r <- GET(go_to_url)
-            writeBin(content(r,'raw'),htmlFile)
+            
         }
-        p <- tools::startDynamicHelp(NA)
-        browser <-  getOption("browser")
-        browseURL(paste0("http://127.0.0.1:", p, "/library/Rdocumentation/doc/index.html?viewer_pane=1&Rstudio_port=",
-            as.character(Sys.getenv("RSTUDIO_SESSION_PORT")),"&RS_SHARED_SECRET=",as.character(Sys.getenv("RS_SHARED_SECRET"))),browser)
-        return (invisible())
+        if(status_code(r)==200){
+            writeBin(content(r,'raw'),htmlFile)
+            p <- tools::startDynamicHelp(NA)
+            browser <-  getOption("browser")
+            browseURL(paste0("http://127.0.0.1:", p, "/library/Rdocumentation/doc/index.html?viewer_pane=1&Rstudio_port=",
+                as.character(Sys.getenv("RSTUDIO_SESSION_PORT")),"&RS_SHARED_SECRET=",as.character(Sys.getenv("RS_SHARED_SECRET"))),browser)
+            return (invisible())
+        }
+        else{
+            simpleError("bad return status")
+        }
+        
     },
     error=function(cond){
         print("Could not reach Rdocumentation, either your internet connection is bad or Rdocumentation is offline")
@@ -101,7 +132,22 @@ login<-function(){
             return (baseenv()$`class<-`(arg1,arg2))
         }
         else{
-            return(utils::browseURL(arg1,arg2))
+            if(body=="DEFAULT"){
+                p <- tools::startDynamicHelp(NA)
+                browser <-  getOption("browser")
+                if(file.exists(paste0(.libPaths()[1],"/Rdocumentation/default.html"))){
+                    tempDir <- paste0(.libPaths()[1],"/Rdocumentation/doc")
+                    htmlFile <- file.path(tempDir, "index.html")
+                    cssFile<-file.path(tempDir,'default.css')
+                    file.copy(paste0(.libPaths()[1],"/Rdocumentation/default.html"),htmlFile,overwrite=TRUE)
+                    file.copy(paste0(.libPaths()[1],"/Rdocumentation/css/default.css"),cssFile,overwrite=TRUE)
+                    browseURL(paste0("http://127.0.0.1:", p, "/library/Rdocumentation/doc/index.html?viewer_pane=1&Rstudio_port=",
+                        as.character(Sys.getenv("RSTUDIO_SESSION_PORT")),"&RS_SHARED_SECRET=",as.character(Sys.getenv("RS_SHARED_SECRET"))),browser)
+                }
+            }
+            else{
+                return(utils::browseURL(arg1,arg2))
+            }
         }        
     })
     
