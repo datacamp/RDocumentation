@@ -5,12 +5,7 @@ rdocs_url <- function(){
 .onLoad<-function(libName,packageName){
     login()
     #locate Rprofile file
-        #search it for Rdocumentation
-    Rprofile<-.getRProfile()
-    names <- scan(Rprofile, what=character(),quiet=TRUE)
-    if(length(grep("Rdocumentation",names))==0){
-        .view_help(paste0(rdocs_url(),"rstudio/make_default"),"DEFAULT",FALSE,"","")
-    }
+    #search it for Rdocumentation
 }
 .getRProfile<-function(){
     if(!file.exists(file.path(Sys.getenv("HOME"),".Rprofile"))){
