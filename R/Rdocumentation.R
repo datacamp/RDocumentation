@@ -1,6 +1,6 @@
 #' @export
 rdocs_url <- function(){
-  return("http://www.staging.rdocumentation.org/")
+  return("http://staging.rdocumentation.org/")
 }
 .onLoad<-function(libName,packageName){
     login()
