@@ -7,12 +7,11 @@ body {
     border: none;
     display: inline-block;
     text-decoration: none;
-    border-radius: $button-radius;
-    font-size: $button-font-size;
-    font-weight: $button-font-weight;
-    line-height: $button-line-height;
+    border-radius:  6px;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.5
     padding: 0.5rem 1.875rem;
-    transition: background-color $default-duration ease, color $default-duration ease;
     text-align: center;
 
     &:hover, &:focus, &:active:focus {
