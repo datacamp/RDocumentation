@@ -38,10 +38,6 @@ window.hideViewer=function(){
 
 
 _rStudioRequest=function(url,method,shared_secret,port,params){
-  console.log("here");
-  console.log(url);
-  console.log(port);
-  console.log(shared_secret);
   var data={}
   data["method"]=method;
   //data["params"]=[$('.R').text()];
@@ -54,6 +50,5 @@ _rStudioRequest=function(url,method,shared_secret,port,params){
   xhr.setRequestHeader('Content-Type','application/json');
   xhr.setRequestHeader('X-Shared-Secret',shared_secret)
   xhr.send(JSON.stringify(data));
-  console.log("sent request");
 }
 </script>
