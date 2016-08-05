@@ -1,6 +1,6 @@
 #' @export
 rdocs_url <- function(){
-  return("http://staging.rdocumentation.org/")
+  return("http://localhost:1337/")
 }
 .onLoad<-function(libName,packageName){
     login()
@@ -31,7 +31,7 @@ login<-function(){
         tryCatch({
                 r <- POST(go_to_url,body=as.character(creds$V1),content_type("application/x-www-form-urlencoded"))
                 if(status_code(r)!=200){
-                    packageStartupMessage("there is something wrong with your credentials, please try logging in to the syte in the help panel")
+                    packageStartupMessage("there is something wrong with your credentials, please try logging in to the site in the help panel")
                 }
                 else{
                     packageStartupMessage("logging you in to Rdocumentation")
@@ -198,10 +198,18 @@ install_package <- function(mypkg,type){
         print("Something went wrong, could not install this package")
     }
 } 
+find.package.help<-function(packages,lib, verbose = FALSE){
+    tryCatch({
+        return (base::find.package(packages,lib,verbose))
+        },
+    error=function(cond){
+        return ("")
+    })
+}
 
 library(proto)
 #' @export
-help <- with(proto(environment(help), help = utils::help, browseURL = .browseUrl.help,`class<-` = `.class.help<-`),help)
+help <- with(proto(environment(help), help = utils::help, browseURL = .browseUrl.help,`class<-` = `.class.help<-`,find.package=find.package.help),help)
 this.help <- with(proto(environment(help), help = utils::help, browseURL = .browseUrl.help,`class<-` = `.class.help<-`),help)
 #' @export
 help.search <- with(proto(environment(help), help.search = utils::help.search, `class<-` = `.class.help<-`),help.search)
