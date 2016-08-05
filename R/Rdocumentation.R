@@ -117,7 +117,7 @@ hideViewer<-function(){
             return (invisible())
         }
         else{
-            simpleError("bad return status")
+            stop("bad return status")
         }
         
     },

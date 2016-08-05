@@ -2,3 +2,24 @@ body {
 	background-color:#33aacc;
 	text-align:center;
 }
+
+.btn {
+    border: none;
+    display: inline-block;
+    text-decoration: none;
+    border-radius:  6px;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.5
+    padding: 0.5rem 1.875rem;
+    text-align: center;
+
+    &:hover, &:focus, &:active:focus {
+        outline: none;
+        border: none;
+    }
+
+    .fa {
+        margin-right: 0.5rem;
+    }
+}
