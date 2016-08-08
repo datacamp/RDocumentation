@@ -1,3 +1,4 @@
+
 #' @export
 rdocs_url <- function(){
   return("http://www.rdocumentation.org/")
@@ -19,14 +20,14 @@ login<-function(){
     library(rjson)
     library(httr)  
     #the jsonlite package turns every variable into an array, which the /login doesn't accept, so the json is parsed with rjson
-    if(file.exists(paste0(.libPaths()[1],"/Rdocumentation/config/creds.txt")) && file.info(paste0(.libPaths()[1],"/Rdocumentation/config/creds.txt"))$size>0){
-        creds<-read.table(paste0(.libPaths()[1],"/Rdocumentation/config/creds.txt"),header=FALSE)
+    if(file.exists(paste0(find.package("Rdocumentation"),"/config/creds.txt")) && file.info(paste0(find.package("Rdocumentation"),"/config/creds.txt"))$size>0){
+        creds<-read.table(paste0(find.package("Rdocumentation"),"/config/creds.txt"),header=FALSE)
         go_to_url=paste0(rdocs_url(),"login")
 
         tryCatch({
                 r <- POST(go_to_url,body=as.character(creds$V1),content_type("application/x-www-form-urlencoded"))
                 if(status_code(r)!=200){
-                    packageStartupMessage("there is something wrong with your credentials, please try logging in to the syte in the help panel")
+                    packageStartupMessage("there is something wrong with your credentials, please try logging in to the site in the help panel")
                 }
                 else{
                     packageStartupMessage("logging you in to Rdocumentation")
@@ -39,7 +40,7 @@ login<-function(){
         )
     }
     else{
-         dir.create(paste0(.libPaths()[1],"/Rdocumentation/config"),showWarnings = FALSE,recursive=TRUE)
+         dir.create(paste0(find.package("Rdocumentation"),"/config"),showWarnings = FALSE,recursive=TRUE)
     }
 
 }
@@ -58,14 +59,21 @@ hideViewer<-function(){
 `.class.help<-`<-function(package,value){
     library(rjson)
     if(value== "help_files_with_topic"){
-        packages<-lapply(package,function(path){
+        if(!exists("package_not_local",envir=environment(help)) || environment(help)$package_not_local==""){
+            packages<-lapply(package,function(path){
             temp = strsplit(path,"/")[[1]]
             return (temp[length(temp)-2])
-        })
-        topic_names<-lapply(package,function(path){
-            temp = strsplit(path,"/")[[1]]
-            return (tail(temp,n=1))
-        })
+            })
+            topic_names<-lapply(package,function(path){
+                temp = strsplit(path,"/")[[1]]
+                return (tail(temp,n=1))
+            })
+        }
+        else{
+            packages<-environment(help)$package_not_local
+            topic_names<-attributes(package)$topic
+            assign("package_not_local","",envir=environment(help))
+        }        
         body= toJSON(list(packages=as.character(paste(packages,sep="",collapse=",")),topic_names=as.character(paste(topic_names,sep="",collapse=",")),
         call=as.character(paste(attributes(package)$call,sep="",collapse=",")),topic=as.character(attributes(package)$topic),
         tried_all_packages=as.character(attributes(package)$tried_all_packages),help_type=as.character(attributes(package)$type)))
@@ -95,7 +103,7 @@ hideViewer<-function(){
     return (.view_help(go_to_url,"",FALSE,url,browser))
 }
 .view_help<-function(go_to_url,body,post,arg1,arg2){
-    tempDir <- paste0(.libPaths()[1],"/Rdocumentation/doc")
+    tempDir <- paste0(find.package("Rdocumentation"),"/doc")
     htmlFile <- file.path(tempDir, "index.html")
     if(!file.exists(tempDir)){
         dir.create(tempDir)
@@ -130,12 +138,12 @@ hideViewer<-function(){
             if(body=="DEFAULT"){
                 p <- tools::startDynamicHelp(NA)
                 browser <-  getOption("browser")
-                if(file.exists(paste0(.libPaths()[1],"/Rdocumentation/default.html"))){
-                    tempDir <- paste0(.libPaths()[1],"/Rdocumentation/doc")
+                if(file.exists(paste0(find.package("Rdocumentation"),"/default.html"))){
+                    tempDir <- paste0(find.package("Rdocumentation"),"/doc")
                     htmlFile <- file.path(tempDir, "index.html")
                     cssFile<-file.path(tempDir,'default.css')
-                    file.copy(paste0(.libPaths()[1],"/Rdocumentation/default.html"),htmlFile,overwrite=TRUE)
-                    file.copy(paste0(.libPaths()[1],"/Rdocumentation/css/default.css"),cssFile,overwrite=TRUE)
+                    file.copy(paste0(find.package("Rdocumentation"),"/default.html"),htmlFile,overwrite=TRUE)
+                    file.copy(paste0(find.package("Rdocumentation"),"/css/default.css"),cssFile,overwrite=TRUE)
                     browseURL(paste0("http://127.0.0.1:", p, "/library/Rdocumentation/doc/index.html?viewer_pane=1&Rstudio_port=",
                         as.character(Sys.getenv("RSTUDIO_SESSION_PORT")),"&RS_SHARED_SECRET=",as.character(Sys.getenv("RS_SHARED_SECRET"))),browser)
                 }
@@ -193,10 +201,20 @@ install_package <- function(mypkg,type){
         print("Something went wrong, could not install this package")
     }
 } 
+find.package.help<-function(packages,lib, verbose = FALSE){
+    tryCatch({
+        return (base::find.package(packages,lib,verbose))
+        },
+    error=function(cond){
+        #because we go over functioncalls and need access in the other function, we need to store this information internally
+        assign("package_not_local",packages,envir=environment(help))
+        return ("")
+    })
+}
 
 library(proto)
 #' @export
-help <- with(proto(environment(help), help = utils::help, browseURL = .browseUrl.help,`class<-` = `.class.help<-`),help)
+help <- with(proto(environment(help), help = utils::help, browseURL = .browseUrl.help,`class<-` = `.class.help<-`,find.package=find.package.help),help)
 this.help <- with(proto(environment(help), help = utils::help, browseURL = .browseUrl.help,`class<-` = `.class.help<-`),help)
 #' @export
 help.search <- with(proto(environment(help), help.search = utils::help.search, `class<-` = `.class.help<-`),help.search)
