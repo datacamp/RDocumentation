@@ -118,13 +118,14 @@ hideViewer<-function(){
     return (.view_help(go_to_url,body,TRUE,package,value))
 }
 
-#TODO make a package url that doesn't return JSON
+#' @export
 .browseUrl.help<-function(url,browser){
     parsing = substring(url,18,nchar(url)-18)
     parts = strsplit(parsing,"/")
     go_to_url=paste0(Rdocumentation::rdocs_url(),"rstudio/package/",parts[[1]][3],"?viewer_pane=1")
     return (.view_help(go_to_url,"",FALSE,url,browser))
 }
+#' @export
 #' @importFrom httr POST
 #' @importFrom httr GET
 #' @importFrom httr status_code
