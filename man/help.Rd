@@ -13,27 +13,30 @@ help(topic, package = NULL, lib.loc = NULL,
 "?"(e1, e2)
 }
 \arguments{
-\item{topic}{usually, a name or character string specifying the topic for which help is sought.
+\item{topic}{usually, \code{\link[base]{name}} lian or character string specifying the topic for which help is sought.
 A character string (enclosed in explicit single or double quotes) is always taken as naming a \code{topic}.
 If the value of \code{topic} is a length-one character vector the topic is taken to be the value of the only element.
-Otherwise topic must be a name or a reserved word (if syntactically valid) or character string. See ‘Details’ for what happens if this is omitted.}
+Otherwise \code{topic} must be a name or a \code{\link[base]{reserved}} word (if syntactically valid) or character string. See ‘Details’ for what happens if this is omitted.}
 
 \item{package}{a name or character vector giving the packages to look into for documentation, or \code{NULL}.
 By default, all packages whose namespaces are loaded are used. To avoid a name being deparsed use e.g. \code{(pkg_ref)} (see the examples).}
 
 \item{lib.loc}{a character vector of directory names of R libraries, or \code{NULL}. The default value of \code{NULL} corresponds to all libraries currently known.
-If the default is used, the loaded packages are searched before the libraries. This is not used for HTML help (see ‘Details’).
+If the default is used, the loaded packages are searched before the libraries. This is not used for HTML help (see ‘Details’ from \code{\link[utils]{help}}).
 When no local matches are found, Rdocumentation will ignore local libraries and search in the online database.}
 
 \item{verbose}{logical; if \code{TRUE}, the file name is reported.}
 
-\item{try.all.packages}{logical; see \code{Note}.}
+\item{try.all.packages}{logical; see Note on \code{\link[utils]{help}}.}
 
-\item{help_type}{character string: the type of help required. Possible values are code{"text"}, \code{"html"} and code{"pdf"}. Case is ignored, and partial matching is allowed.}
+\item{help_type}{only works if the user is offline, otherwise documentation is viewed on Rdocumentation.org in the help-panel
+character string: the type of help required. Possible values are code{"text"}, \code{"html"} and code{"pdf"}. Case is ignored, and partial matching is allowed.}
 
-\item{topic}{Usually, a name or character string specifying the topic for which help is sought. Alternatively, a function call to ask for documentation on a corresponding S4 method: see the section on S4 method documentation. The calls pkg::topic and pkg:::topic are treated specially, and look for help on topic in package pkg.}
+\item{topic}{Usually, a name or character string specifying the topic for which help is sought. Alternatively, a function call to ask for documentation on a corresponding S4 method: 
+see the section on S4 method documentation in \code{\link[utils]{?}}. The calls pkg::topic and pkg:::topic are treated specially, and look for help on topic in package pkg.}
 
-\item{type}{the special type of documentation to use for this topic; for example, if the type is class, documentation is provided for the class with name topic. See the Section ‘S4 Method Documentation’ for the uses of type to get help on formal methods, including methods?function and method?call.
+\item{type}{the special type of documentation to use for this topic; for example, if the type is class, documentation is provided for the class with name topic. 
+See the Section ‘S4 Method Documentation in \code{\link[utils]{?}}’ for the uses of type to get help on formal methods, including methods?function and method?call.
 
 This is a shortcut to help and uses its default type of help.
 Some topics need to be quoted (by backticks) or given as a character string. There include those which cannot syntactically appear on their own such as unary and binary operators, function and control-flow reserved words (including if, else for, in, repeat, while, break and next. The other reserved words can be used as if they were names, for example TRUE, NA and Inf.}
@@ -73,6 +76,10 @@ help(centre,ftsa)
 # 
 # ?combo(1:10, letters)    # documentation for the default method
 # ## End(Not run)
+}
+\seealso{
+\url{http://www.rdocumentation.org} for the online version of the documentation, \code{\link[Rdocumentation]{help.search}} for finding help on vague topics or \code{\link[utils]{help}} for 
+documentation of the offline help.
 }
 \keyword{documentation}
 

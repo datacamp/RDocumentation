@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html class="">
+<html class="rstudio">
   <head>
     
-      <title>RDocumentation</title>
+      <title>Rdocumentation v0.2 | RDocumentation</title>
     
 
     <base href="http://staging.rdocumentation.org">
@@ -11,14 +11,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta http-equiv=Content-Type content=text/html; charset="UTF-8">
     
+      <meta name="description" content="Enhance the search/help functionality in R with Rdocumentation.org" />
+    
+    
+      <link href="/packages/Rdocumentation/versions/0.2" rel="canonical" />
     
 
     <!--STYLES-->
-    <link rel="stylesheet" href="/min/production.min.a0b2780bece542bb021062b702e92529.css">
+    <link rel="stylesheet" href="/min/production.min.9003b8fee8dd7c888a03bbad81085a21.css">
     <!--STYLES END-->
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,600,600italic,700,700italic' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" href='https://cdn.rawgit.com/novus/nvd3/v1.8.1/build/nv.d3.css'>
-    <link href = "https://code.jquery.com/ui/1.12.0-rc.2/themes/smoothness/jquery-ui.css" rel = "stylesheet">
+
+    <link rel="stylesheet" href='/css/nv.d3.min.css'>
+    <link href = "http://code.jquery.com/ui/1.12.0-rc.2/themes/smoothness/jquery-ui.css" rel = "stylesheet">
 
     <script type="text/x-mathjax-config">
       MathJax.Hub.Config({
@@ -46,17 +51,8 @@
 
 
     
-      <ul class="navbar--navigation">
-  
-    <li><a href="/register" class="link">Create account</a></li>
-    <li><a href="/login" class="link">Sign in</a></li>
-  
-</ul>
-    
 
     <ul class="navbar--navigation largescreen">
-    
-        <li><a href="https://github.com/datacamp/Rdocumentation" class="link">R package</a></li>
     
         <li><a href="/trends" class="link">Leaderboard</a></li>
     </ul>
@@ -69,15 +65,266 @@
   </nav>
 </section>
 
-<section class="package">
-  <div class="container">
-    <header>
-      <h4>Do you want to make Rdocumentation your default help package?</h4>
+
+<section data-package-name="Rdocumentation" data-type-id="3" class="package packageData" itemscope itemtype="http://schema.org/SoftwareApplication">
+  <div id="package--container" class="container-fluid">
+    <header class='row'>
+
+      <div class='col-xs-4'>
+        <div class='container-fluid'>
+          <div class='row'>
+            <div class='col-sm-12'><h1 class= 'package--title' itemprop="name">Rdocumentation</h1></div>
+          </div>
+          <div class="row">
+            <div class='col-sm-6'>
+              <div class="select">
+                <select id="packageVersionSelect">
+                  
+                    <option data-uri="/packages/Rdocumentation/versions/0.1"
+                      value="0.1"
+                      
+                      
+                      >
+                      0.1
+                    </option>
+                  
+                    <option data-uri="/packages/Rdocumentation/versions/0.2"
+                      value="0.2"
+                      selected
+                      itemprop=&quot;softwareVersion&quot;
+                      >
+                      0.2
+                    </option>
+                  
+                </select>
+              </div>
+            </div>
+
+            
+              <div class="col-sm-6">
+                <div class="versionCheck"></div>
+              </div>
+            
+
+            
+          </div>
+        </div>
+
+      </div>
+
+
+      <div class='col-xs-4'>
+        
+        <div class="maintainer">
+          <i class="fa fa-user" aria-hidden="true"></i>
+          <div class="maintainer">
+            <div class="data">
+            <a itemprop="creator" href="/collaborators/name/Jonathan%20Cornelissen">
+                  Jonathan Cornelissen</a>
+                  <a href="mailto:Jonathan@datamind.org">
+                  <i class="fa fa-envelope" aria-hidden="true"></i></a>
+            </div>
+            <p>Maintainer</p>
+          </div>
+        </div>
+        
+      </div>
+
+      <div class="col-xs-4">
+        <div class="downloads download-task" data-url="/api/packages/Rdocumentation/versions/0.2/downloads/splitted">
+          <span class="downloads-nr" >
+            <span class='indeps'>0</span>
+            <i class="fa fa-info-circle fa-2x" aria-hidden="false"></i>
+          </span>
+          <p>Monthly downloads</p>
+        </div>
+        <div class="downloads" id = "percentile-arrow">
+          <i class="fa fa-chevron-right fa-2x" aria-hidden="false"></i>
+        </div>
+        <div class="downloads">
+          <span class="downloads-nr percentile-task" data-url="/api/packages/Rdocumentation/versions/0.2/percentile" >
+            <span class='percentile'>0th</span>
+          </span>
+          <p>Percentile</p>
+        </div>
+      </div>
     </header>
-    <button type="button" id="js-makedefault" class="btn btn-primary js-external">Yes</button>
-    <button type="button" id="js-hideviewer" class="btn btn-primary js-external">No</button>
+
+    <section id="details" class="container-fluid sliding">
+      <div class="row">
+
+        <div class="col-sm-12 package--details">
+
+          <div class='row'>
+            <div class="col-sm-12">
+            
+              <div class= "contributor">
+                  <div class="listed">
+                    <h5>Contributors:</h5>
+                      <ul>
+                        
+                          <li><a href="/collaborators/name/Jonathan%20Cornelissen">Jonathan Cornelissen</a></li>
+                        
+                      </ul>
+                  </div>
+              </div>
+            
+            </div>
+          </div>
+
+          <div class='row'>
+            <div class='col-sm-12 package--details'>
+              <table>
+                
+                  <tr>
+                    <td>Type</td>
+                    <td>Package</td>
+                  </tr>
+                
+                  <tr>
+                    <td>Date</td>
+                    <td>2013-07-26</td>
+                  </tr>
+                
+                  <tr>
+                    <td>License</td>
+                    <td>GPL (>= 2)</td>
+                  </tr>
+                
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="tabs" class="row">
+        <ul class="tabs">
+          <li><a href="/packages/Rdocumentation/versions/0.2#chart" class= "js-external js-tab">Rdocumentation downloads</a></li>
+          <li><a id="tab1" href="/packages/Rdocumentation/versions/0.2#packagedependencygraph" class= "js-external js-tab">Dependency graph</a></li>
+          <li><a id="tab2" href="/packages/Rdocumentation/versions/0.2#packagereversedependencygraph" class= "js-external js-tab">Reverse dependency graph</a></li>
+        </ul>
+        <div class='tabs--content' id="chart" style="display: none" data-url="/api/packages/Rdocumentation/versions/0.2/downloads/per_day_last_month">
+          <svg></svg>
+        </div>
+        <div class='tabs--content' id="packagedependencygraph" style="dislay:none" data-url="/api/packages/Rdocumentation/versions/0.2/dependencies">
+          <svg></svg>
+        </div>
+        <div class='tabs--content' id="packagereversedependencygraph" style ="display:none" data-url="/api/packages/Rdocumentation/versions/0.2/reversedependencies" >
+          <svg></svg>
+        </div>
+      </div>
+
+
+
+
+
+    </section>
+
+    <section id = "slider">
+    <i class="slider fa fa-angle-down" aria-hidden="true"></i>
+    </section>
+
+    <section class="package--info">
+      <h4 itemprop="headline">Integrate R with Rdocumentation.org</h4>
+      <p itemprop="description">Enhance the search/help functionality in R with Rdocumentation.org</p>
+    </section>
+
+    <section class="table-list">
+      <h4 class="table-title">Functions in Rdocumentation  </h4>
+      <input id="filter" type="text" placeholder="Search">
+      <table>
+        <thead>
+          <tr>
+            <td>Name <i class="fa fa-sort" aria-hidden="true"></i></td>
+            <td>Description <i class="fa fa-sort" aria-hidden="true"></i></td>
+            <td width="115">Rating <i class="fa fa-sort" aria-hidden="true"></i></td>
+          </tr>
+        </thead>
+        <tbody id="filterableItems">
+          
+            
+            <tr>
+              <td><a href="/packages/Rdocumentation/versions/0.2/topics/Rdocumentation-package">Rdocumentation-package</a></td>
+              <td>
+What the package does (short line)
+~~ package title ~~
+</td>
+              <td>
+                <div class="rating">
+                  
+                  
+                    <i class="fa fa-star-o" aria-hidden="true"></i>
+                  
+                    <i class="fa fa-star-o" aria-hidden="true"></i>
+                  
+                    <i class="fa fa-star-o" aria-hidden="true"></i>
+                  
+                    <i class="fa fa-star-o" aria-hidden="true"></i>
+                  
+                    <i class="fa fa-star-o" aria-hidden="true"></i>
+                  
+                </div>
+              </td>
+            </tr>
+          
+          <tr class="no-results"><td colspan="3">No Results!</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    
+    <section class="package--readme">
+      <h3> Readme </h3>
+      
+      
+        <h1 id="rdocumentation">Rdocumentation</h1>
+<p>Enhance the search/help functionality in R with <a href="http://www.Rdocumentation.org">Rdocumentation.org</a>, and discover what R packages are most popular.</p>
+<h1 id="installation">Installation</h1>
+<p>To install the package, use <code>devtools</code>:</p>
+<pre><code class="lang-R">devtools::install_github(&quot;datacamp/Rdocumentation&quot;)
+library(Rdocumentation)
+</code></pre>
+
+      
+
+    </section>
+    
+
+    <section class="package--dependencies">
+      <h4>Dependencies</h4>
+      <ul class="inline">
+        
+          <li ><a itemprop="softwareRequirements" href="/packages/httr">httr</a></li>
+        
+          <li ><a itemprop="softwareRequirements" href="/packages/proto">proto</a></li>
+        
+          <li ><a itemprop="softwareRequirements" href="/packages/rjson">rjson</a></li>
+        
+      </ul>
+    </section>
+
+    
+    
+
+
+<div class='reviews' id="postReview">
+  <h3>Reviews</h3>
+  <div class="review-content">
+    
+      <div class="review--placeholder">Looks like there are no reviews yet.</div>
+    
+    
+  </div>
+  
+      <p>You are not logged in, please <a href="/login?rdr=%2Fpackages%2FRdocumentation%2Fversions%2F0.2">Sign in</a> or <a href="/register?rdr=%2Fpackages%2FRdocumentation%2Fversions%2F0.2">Create an account</a> to post reviews.</p>
+  
+</div>
+
+
+
   </div>
 </section>
+
 <div class="footer">
   <div class="navbar--title largescreen">
 	<a href=https://github.com/datacamp/rdocumentation>
@@ -95,6 +342,7 @@
 	<p class="footer--credits">Created by <a href="https://www.datacamp.com">DataCamp.com</a></p>
   </div>
 </div>
+
 
 
     <!--
@@ -123,12 +371,12 @@
     <!--TEMPLATES END-->
 
     <script src="http://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.3/nv.d3.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.27.2/js/jquery.tablesorter.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.3/nv.d3.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.27.2/js/jquery.tablesorter.js"></script>
     <script src="http://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
     <!--SCRIPTS-->
-    <script src="/min/production.min.c6ce451dc94e64fc3edfb4d361f639d6.js"></script>
+    <script src="/min/production.min.2482b9b8cce229db71243a38fb71ecd5.js"></script>
     <!--SCRIPTS END-->
     <script>hljs.initHighlightingOnLoad();</script>
 
