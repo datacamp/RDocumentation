@@ -12,3 +12,4 @@ Imports:
     proto (>= 0.3-10),
     rjson (>= 0.2.15)
 RoxygenNote: 5.0.1
+Suggests: testthat

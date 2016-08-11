@@ -45,16 +45,16 @@ login<-function(){
 
         tryCatch({
                 r <- POST(go_to_url,body=as.character(creds$V1),content_type("application/x-www-form-urlencoded"))
-                if(status_code(r)!=200){
-                    packageStartupMessage("there is something wrong with your credentials, please try logging in to the site in the help panel")
+                if(length(grep("Invalid Username or password",content(r,"text")))>0) {
+                    print("there is something wrong with your credentials, please try logging in to the site in the help panel")
                 }
                 else{
-                    packageStartupMessage("logging you in to Rdocumentation")
+                    print("logging you in to Rdocumentation")
                 }
             },
             error=function(cond){
                 print(cond)
-                packageStartupMessage("Could not log you in, something is wrong with your internet connection or Rdocumentation is offline")
+                print("Could not log you in, something is wrong with your internet connection or Rdocumentation is offline")
             }
         )
     }
@@ -96,7 +96,6 @@ hideViewer<-function(){
         else{
             packages<-environment(help)$package_not_local
             topic_names<-attributes(package)$topic
-            assign("package_not_local","",envir=environment(help))
         }        
         body= toJSON(list(packages=as.character(paste(packages,sep="",collapse=",")),topic_names=as.character(paste(topic_names,sep="",collapse=",")),
         call=as.character(paste(attributes(package)$call,sep="",collapse=",")),topic=as.character(attributes(package)$topic),
@@ -139,6 +138,13 @@ hideViewer<-function(){
     if(!file.exists(tempDir)){
         dir.create(tempDir)
     }
+    if(exists("package_not_local",envir=environment(help))){
+        package_not_local=environment(help)$package_not_local
+    }
+    else{
+        package_not_local=""
+    }
+    assign("package_not_local","",envir=environment(help))
     tryCatch({
         if(post){
             r <- POST(go_to_url,config=(content_type_json()),body =body,encode="json")
@@ -162,6 +168,9 @@ hideViewer<-function(){
     },
     error=function(cond){
         print("Could not reach Rdocumentation, either your internet connection is bad or Rdocumentation is offline")
+        if(package_not_local!=""){
+            stop(paste0("package ",package_not_local," is not in your local library"))
+        }
         if(post){
             return (baseenv()$`class<-`(arg1,arg2))
         }
