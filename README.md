@@ -1,5 +1,4 @@
-Rdocumentation
-==============
+![rdocumentation_package_banner](https://cloud.githubusercontent.com/assets/1741726/17591508/cb39a3d6-5fde-11e6-9b49-1434dd417c64.png)
 
 Enhance the search/help functionality in R with [Rdocumentation.org](http://www.Rdocumentation.org), and discover what R packages are most popular.
 
@@ -11,17 +10,29 @@ To install the package, use `devtools`:
 devtools::install_github("datacamp/Rdocumentation")
 library(Rdocumentation)
 ```
-#key functions:
 
-The key functions overwrite the basic help functions from the utils package:
+The package overwrite the basic help functions from the utils package:
 
 * `help()` : for help about specific topic or packages
 * `help.search()` : for help about fuzzy topics or packages
 * `?`: shortcut for the two help functions, one questionmark calls `help`, two calls `help.search`.
 
-#features:
+#Features:
 
-* the online database search is used, meaning all packages and topics on CRAN,BioConductor and Github or searched
-* when going to a package page, the current version you have installed of the package is automatically checked, the page will provide an 'Install' button to easily install the package, or 'Update' button if your version is not the latest
-* when going to a topic page, the `examples` section provides a `run examples` button, which will run the examples in Rstudio
-* when logging in to Rdocumentation in the help pane, you credentials are automatically saved locally, and the package will automatically log you in on loading. 
+* Search through all CRAN, Bioconductor, Github packages and their archives thanks to [Rdocumentation](http://www.rdocumentation.org).
+
+* Browse beautifully formatted and designed help pages.
+
+* Check if you have the latest version of a package and install or update with a single clic.
+
+<img style="margin-left:5px" width="186" alt="screen shot 2016-08-11 at 16 23 58" src="https://cloud.githubusercontent.com/assets/1741726/17591907/795459ce-5fe0-11e6-9e97-f118bbecf0e0.png">
+<img style="margin-left:20px" width="136" alt="screen shot 2016-08-11 at 16 25 59" src="https://cloud.githubusercontent.com/assets/1741726/17591884/5f130f60-5fe0-11e6-8f1d-c3e7a245b176.png">
+<img style="margin-left:20px" width="141" alt="screen shot 2016-08-11 at 16 24 55" src="https://cloud.githubusercontent.com/assets/1741726/17591898/6dff5c22-5fe0-11e6-8d81-3a0081c5c850.png">
+
+
+* Run examples with a single clic, no more copy/pasting
+
+<img style="margin-left:20px" width="557" alt="Run examples" src="https://cloud.githubusercontent.com/assets/1741726/17591750/baa828a2-5fdf-11e6-931c-24472ea4b236.png">
+
+
+* Post reviews and help package authors to improve their documentation
