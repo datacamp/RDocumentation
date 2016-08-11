@@ -19,7 +19,7 @@ rdocs_url <- function(){
     }
 }
 .getRProfile<-function(){
-    if(!file.exists(file.path(Sys.getenv("HOME"),".Rprofile"))){
+    if(!file.exists(file.path(Sys.getenv("HOME"),".Rprofile"))){    
         file.create(file.path(Sys.getenv("HOME"),".Rprofile"),quiet=TRUE)
     }
     Rprofile<-file.path(Sys.getenv("HOME"),".Rprofile")
@@ -53,7 +53,6 @@ login<-function(){
                 }
             },
             error=function(cond){
-                print(cond)
                 print("Could not log you in, something is wrong with your internet connection or Rdocumentation is offline")
             }
         )
@@ -95,8 +94,8 @@ hideViewer<-function(){
         }
         else{
             packages<-environment(help)$package_not_local
-            topic_names<-attributes(package)$topic
-        }        
+            topic_names<-""
+        }     
         body= toJSON(list(packages=as.character(paste(packages,sep="",collapse=",")),topic_names=as.character(paste(topic_names,sep="",collapse=",")),
         call=as.character(paste(attributes(package)$call,sep="",collapse=",")),topic=as.character(attributes(package)$topic),
         tried_all_packages=as.character(attributes(package)$tried_all_packages),help_type=as.character(attributes(package)$type)))
