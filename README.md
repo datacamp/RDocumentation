@@ -23,14 +23,14 @@ The package overwrite the basic help functions from the utils package:
 
 * Browse beautifully formatted and designed help pages.
 
-* Check if you have the latest version of a package and install or update with a single clic.
+* Check if you have the latest version of a package and install or update with a single click.
 
 <img style="margin-left:5px" width="186" alt="screen shot 2016-08-11 at 16 23 58" src="https://cloud.githubusercontent.com/assets/1741726/17591907/795459ce-5fe0-11e6-9e97-f118bbecf0e0.png">
 <img style="margin-left:20px" width="136" alt="screen shot 2016-08-11 at 16 25 59" src="https://cloud.githubusercontent.com/assets/1741726/17591884/5f130f60-5fe0-11e6-8f1d-c3e7a245b176.png">
 <img style="margin-left:20px" width="141" alt="screen shot 2016-08-11 at 16 24 55" src="https://cloud.githubusercontent.com/assets/1741726/17591898/6dff5c22-5fe0-11e6-8d81-3a0081c5c850.png">
 
 
-* Run examples with a single clic, no more copy/pasting
+* Run examples with a single click, no more copy/pasting
 
 <img style="margin-left:20px" width="557" alt="Run examples" src="https://cloud.githubusercontent.com/assets/1741726/17591750/baa828a2-5fdf-11e6-931c-24472ea4b236.png">
 
