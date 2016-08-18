@@ -6,8 +6,10 @@ Date: 2013-07-26
 Author: Jonathan Cornelissen (for Rdocumentation.org)
 Maintainer: Jonathan Cornelissen <Jonathan@datamind.org>
 Description: Enhance the search/help functionality in R with Rdocumentation.org
-License:  GPL (>= 2)
+License: GPL (>= 2)
 Imports:
     httr (>= 1.2.1),
     proto (>= 0.3-10),
     rjson (>= 0.2.15)
+RoxygenNote: 5.0.1
+Suggests: testthat
