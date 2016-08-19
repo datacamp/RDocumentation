@@ -1,4 +1,4 @@
-library(Rdocumentation)
+library(RDocumentation)
 context(".getRProfile")
 
 test_that("Rprofile_file_exists",{

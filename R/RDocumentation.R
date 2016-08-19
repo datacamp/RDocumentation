@@ -1,5 +1,5 @@
 
-#' Return the url for Rdocumentation
+#' Return the url for RDocumentation
 #'
 #' @return The url for Rdocumentation
 #' @examples
@@ -8,11 +8,11 @@
 rdocs_url <- function(){
   return ("http://staging.rdocumentation.org/")
 }
-.onLoad <- function(libName,packageName){
+.onLoad <- function(libName,pkgeName){
     login()
     Rprofile <- .getRProfile()
     names <- scan(Rprofile, what=character(),quiet=TRUE)
-    if (length(grep("Rdocumentation",names)) == 0){
+    if (length(grep("RDocumentation",names)) == 0){
         .view_help(paste0(rdocs_url(),"rstudio/make_default?viewer_pane=1"),"DEFAULT",FALSE,"","")
     }
 }
@@ -23,62 +23,63 @@ rdocs_url <- function(){
     Rprofile<-file.path(Sys.getenv("HOME"),".Rprofile")
     return (Rprofile)
 }
-#' Log you in to Rdocumentation if credentials are saved from last time
+#' Log you in to RDocumentation if credentials are saved from last time
 #'
-#' Logs you in to Rdocumentation if credentials from a previous session where saved. To save credentials, please login using the login button from a random help page on Rdocumentation.
+#' Logs you in to RDocumentation if credentials from a previous session where saved. To save credentials, please login using the login button from a random help page on RDocumentation.
 #'
 #' @examples
 #' login()
 #' @export
 #' @importFrom httr POST
 #' @importFrom httr status_code
+#' @importFrom httr content_type
 #' @importFrom rjson toJSON
-login<-function(){
-    library(rjson)
-    library(httr)  
+#' @importFrom utils read.table
+login<-function(){ 
     # The jsonlite package turns every variable into an array, which the /login doesn't accept, so the json is parsed with rjson
-    if(file.exists(paste0(find.package("Rdocumentation"),"/config/creds.txt")) && file.info(paste0(find.package("Rdocumentation"),"/config/creds.txt"))$size > 0){
-        creds <- read.table(paste0(find.package("Rdocumentation"),"/config/creds.txt"), header = FALSE)
+    if(file.exists(paste0(find.package("RDocumentation"),"/config/creds.txt")) && file.info(paste0(find.package("RDocumentation"),"/config/creds.txt"))$size > 0){
+        creds <- read.table(paste0(find.package("RDocumentation"),"/config/creds.txt"), header = FALSE)
         go_to_url = paste0(rdocs_url(),"login")
 
         tryCatch({
                 r <- POST(go_to_url, body = as.character(creds$V1), content_type("application/x-www-form-urlencoded"))
                 if (length(grep("Invalid Username or password",content(r,"text"))) > 0) {
-                    print("there is something wrong with your credentials, please try logging in to the site in the help panel")
+                    cat("there is something wrong with your credentials, please try logging in to the site in the help panel")
                 }
                 else{
-                    print("logging you in to Rdocumentation")
+                    cat("logging you in to RDocumentation")
                 }
             },
             error = function(cond){
-                print("Could not log you in, something is wrong with your internet connection or Rdocumentation is offline")
+                cat("Could not log you in, something is wrong with your internet connection or RDocumentation is offline")
             }
         )
     }
     else{
-         dir.create(paste0(find.package("Rdocumentation"),"/config"), showWarnings = FALSE, recursive = TRUE)
+         dir.create(paste0(find.package("RDocumentation"),"/config"), showWarnings = FALSE, recursive = TRUE)
     }
 
 }
-#' Makes the Rdocumentation package the default help-package.
+#' Makes the RDocumentation package the default help-package.
 #'
 #' @export
 makeDefault <- function(){
     Rprofile <- .getRProfile()
-    write("options(defaultPackages = c(getOption('defaultPackages'), 'Rdocumentation'))", file = Rprofile, append = TRUE)
+    write("options(defaultPackages = c(getOption('defaultPackages'), 'RDocumentation'))", file = Rprofile, append = TRUE)
     hideViewer()
     return (invisible())
 }
-#' Redirects the viewer to the Rdocumentation help page.
+#' Redirects the viewer to the RDocumentation help page.
 #'
 #' @export
+#' @importFrom utils tail
 hideViewer <- function(){
-    help(package = Rdocumentation)
+    help(package = "RDocumentation")
 }
 
-# Overwrites the class<- function, converts help answers to json and sends them to Rdocumentation
+# Overwrites the class<- function, converts help answers to json and sends them to RDocumentation
+# @importFrom rjson toJSON
 `.class.help<-` <- function(package, value){
-    library(rjson)
     if (value == "help_files_with_topic"){
         if (!exists("package_not_local", envir = environment(help)) || environment(help)$package_not_local == ""){
             packages<-lapply(package,function(path){
@@ -94,10 +95,10 @@ hideViewer <- function(){
             packages <- environment(help)$package_not_local
             topic_names <- ""
         }     
-        body = toJSON(list(packages = as.character(paste(packages,sep = "",collapse = ",")), topic_names = as.character(paste(topic_names, sep = "", collapse = ",")),
+        body = rjson::toJSON(list(packages = as.character(paste(packages,sep = "",collapse = ",")), topic_names = as.character(paste(topic_names, sep = "", collapse = ",")),
                            call = as.character(paste(attributes(package)$call, sep = "", collapse = ",")), topic = as.character(attributes(package)$topic),
                            tried_all_packages = as.character(attributes(package)$tried_all_packages), help_type = as.character(attributes(package)$type)))
-                           go_to_url = paste0(Rdocumentation::rdocs_url(), "rstudio/normal/help?viewer_pane=1")
+                           go_to_url = paste0(RDocumentation::rdocs_url(), "rstudio/normal/help?viewer_pane=1")
     }
     else{
         hsearch_db_fields <- c("alias", "concept", "keyword", "name", "title")
@@ -105,12 +106,12 @@ hideViewer <- function(){
         fields = lapply(package$fields, function(e){
             return (elas_search_db_fields[which(hsearch_db_fields == e)])
         })
-        body = toJSON(list(query = as.character(package[1]), fields = as.character(paste(fields, sep = "", collapse = ",")),
+        body = rjson::toJSON(list(query = as.character(package[1]), fields = as.character(paste(fields, sep = "", collapse = ",")),
                            type = as.character(package[3]), agrep = as.character(package[4]), ignore_case = as.character(package[5]),
                            types = as.character(paste(package$types, sep = "", collapse = ",")), package = as.character(package[7]),
                            matching_titles = as.character(gsub(" ", "", toString(unique(package$matches$Topic)), fixed = TRUE)),
                            matching_packages = as.character(gsub(" ", "", toString(unique(package$matches$Package)), fixed = TRUE))))
-                           go_to_url = paste0(Rdocumentation::rdocs_url(),"rstudio/search/help?viewer_pane=1")
+                           go_to_url = paste0(RDocumentation::rdocs_url(),"rstudio/search/help?viewer_pane=1")
     }
     return (.view_help(go_to_url, body, TRUE, package, value))
 }
@@ -119,7 +120,7 @@ hideViewer <- function(){
 .browseUrl.help <- function(url, browser){
     parsing = substring(url,18, nchar(url)-18)
     parts = strsplit(parsing, "/")
-    go_to_url = paste0(Rdocumentation::rdocs_url(), "rstudio/package/", parts[[1]][3], "?viewer_pane=1")
+    go_to_url = paste0(RDocumentation::rdocs_url(), "rstudio/package/", parts[[1]][3], "?viewer_pane=1")
     return (.view_help(go_to_url, "", FALSE, url, browser))
 }
 #' @export
@@ -129,8 +130,9 @@ hideViewer <- function(){
 #' @importFrom httr content
 #' @importFrom httr content_type_json
 #' @importFrom rjson toJSON
+#' @importFrom utils browseURL
 .view_help <- function(go_to_url, body, post, arg1, arg2){
-    tempDir <- paste0(find.package("Rdocumentation"), "/doc")
+    tempDir <- paste0(find.package("RDocumentation"), "/doc")
     htmlFile <- file.path(tempDir, "index.html")
     if (!file.exists(tempDir)){
         dir.create(tempDir)
@@ -154,7 +156,7 @@ hideViewer <- function(){
             writeBin(content(r, "raw"), htmlFile)
             p <- tools::startDynamicHelp(NA)
             browser <- getOption("browser")
-            browseURL(paste0("http://127.0.0.1:", p, "/library/Rdocumentation/doc/index.html?viewer_pane=1&Rstudio_port=",
+            browseURL(paste0("http://127.0.0.1:", p, "/library/RDocumentation/doc/index.html?viewer_pane=1&Rstudio_port=",
                 as.character(Sys.getenv("RSTUDIO_SESSION_PORT")), "&RS_SHARED_SECRET=", as.character(Sys.getenv("RS_SHARED_SECRET"))), browser)
             return (invisible())
         }
@@ -164,7 +166,7 @@ hideViewer <- function(){
         
     },
     error = function(cond){
-        print("Could not reach Rdocumentation, either your internet connection is bad or Rdocumentation is offline")
+        print("Could not reach RDocumentation, either your internet connection is bad or RDocumentation is offline")
         if (package_not_local != ""){
             stop(paste0("package ", package_not_local, " is not in your local library"))
         }
@@ -175,13 +177,13 @@ hideViewer <- function(){
             if (body == "DEFAULT"){
                 p <- tools::startDynamicHelp(NA)
                 browser <-  getOption("browser")
-                if (file.exists(paste0(find.package("Rdocumentation"), "/default.html"))){
-                    tempDir <- paste0(find.package("Rdocumentation"), "/doc")
+                if (file.exists(paste0(find.package("RDocumentation"), "/default.html"))){
+                    tempDir <- paste0(find.package("RDocumentation"), "/doc")
                     htmlFile <- file.path(tempDir, "index.html")
                     cssFile <- file.path(tempDir, "default.css")
-                    file.copy(paste0(find.package("Rdocumentation"), "/default.html"), htmlFile, overwrite = TRUE)
-                    file.copy(paste0(find.package("Rdocumentation"), "/css/default.css"), cssFile, overwrite = TRUE)
-                    browseURL(paste0("http://127.0.0.1:", p, "/library/Rdocumentation/doc/index.html?viewer_pane=1&Rstudio_port=",
+                    file.copy(paste0(find.package("RDocumentation"), "/default.html"), htmlFile, overwrite = TRUE)
+                    file.copy(paste0(find.package("RDocumentation"), "/css/default.css"), cssFile, overwrite = TRUE)
+                    browseURL(paste0("http://127.0.0.1:", p, "/library/rdocumentation/doc/index.html?viewer_pane=1&Rstudio_port=",
                                      as.character(Sys.getenv("RSTUDIO_SESSION_PORT")), "&RS_SHARED_SECRET=", as.character(Sys.getenv("RS_SHARED_SECRET"))), browser)
                 }
             }
@@ -195,21 +197,34 @@ hideViewer <- function(){
 #' Check if a package is installed for the user.
 #'
 #' @param mypkg Name of the package
+#' @param version the latest version to be checked
 #' @return FALSE if the package is not installed, otherwise the versionnumber of the package
 #' @examples
-#' check_package("Rdocumentation")
-#' check_package("utils")
+#' check_package("RDocumentation","0.2")
+#' check_package("utils","3.3.1")
 #' @export
-check_package <- function(mypkg){
+#' @importFrom utils packageVersion
+check_package <- function(mypkg,version){
     if (!is.element(mypkg, installed.packages()[ ,1])){
-        print("The package for this topic is not installed, try running:")
-        print(paste0("install.packages('", mypkg,"')"))
-        print("Or check the installation notes for the package with:")
-        print(paste0("help(package=", mypkg,")"))
-        return (FALSE)
+        return (1)
     }
     else{
-        return (packageVersion(mypkg))
+        i = 1
+        testPackage <- unlist(strsplit(as.character(packageVersion(mypkg)),"[.]"))
+        testVersion <- unlist(strsplit(as.character(version),"[.]"))
+        while  (i <= length(testPackage)){
+            if (length(testVersion) < i){
+                return (-1)
+            }
+            if (as.numeric(testVersion[i]) < as.numeric(testPackage[i])){
+                return (-1)
+            }
+            if (as.numeric(testVersion[i]) > as.numeric(testPackage[i])){
+                return (0)
+            }
+            i = i + 1
+        }
+        return (0)
     }
 } 
 #' Installs the given package
@@ -217,13 +232,18 @@ check_package <- function(mypkg){
 #' @param mypkg the name of the package you want to install
 #' @param type the type of the package, type 1 means the package comes from CRAN, type 2 packages are from bioconductor, type 3 packages are from github and type 4 packages are by default part of R.
 #' @examples
-#' install_package("dplyr",1)
-#' install_package("Rdocumentation",3)
+#' ## Not run
+#' ## install_package("dplyr",1)
+#' ## install_package("RDocumentation",3)
 #' @export
+#' @importFrom githubinstall githubinstall
+#' @importFrom BiocInstaller biocLite
+#' @importFrom utils install.packages
+#' @importFrom utils installed.packages
 install_package <- function(mypkg, type){
     if (type == 1){
         #CRAN
-        install.packages(mypkg);
+        install.packages(mypkg,repos="http://cran.rstudio.com/");
     }
     else if (type == 2){
         #bioconductor
@@ -236,19 +256,15 @@ install_package <- function(mypkg, type){
         }         
     }
     else if (type == 3){
-        #github,needs url
-        if (!is.element("githubinstall", installed.packages()[ ,1])){
-            install.packages("githubinstall")
-        }
-        library(githubinstall)
-        githubinstall(mypkg)
+        #github
+        githubinstall::githubinstall(mypkg)
 
     }
     else if (type == 4){
-        print("Can not install this package, you need to upgrade your R installation")
+        cat("Can not install this package, you need to upgrade your R installation")
     }
     else{
-        print("Something went wrong, could not install this package")
+        cat("Something went wrong, could not install this package")
     }
 } 
 
@@ -263,34 +279,30 @@ find.package.help <- function(packages, lib, verbose = FALSE){
     })
 }
 
-library(proto)
-#' Documentation on Rdocumentation or via the normal help system if offline
+#' Documentation on RDocumentation or via the normal help system if offline
 #'
-#'\code{help} contacts Rdocumentation for help given aliases and packages
+#'\code{help} contacts RDocumentation for help given aliases and packages
 #'
-#' @param topic usually, \code{\link[base]{name}} lian or character string specifying the topic for which help is sought.
-#' A character string (enclosed in explicit single or double quotes) is always taken as naming a \code{topic}.
-#' If the value of \code{topic} is a length-one character vector the topic is taken to be the value of the only element.
-#' Otherwise \code{topic} must be a name or a \code{\link[base]{reserved}} word (if syntactically valid) or character string. See ‘Details’ for what happens if this is omitted.
 #' @param package a name or character vector giving the packages to look into for documentation, or \code{NULL}.
 #' By default, all packages whose namespaces are loaded are used. To avoid a name being deparsed use e.g. \code{(pkg_ref)} (see the examples).
 #' @param lib.loc a character vector of directory names of R libraries, or \code{NULL}. The default value of \code{NULL} corresponds to all libraries currently known.
 #' If the default is used, the loaded packages are searched before the libraries. This is not used for HTML help (see ‘Details’ from \code{\link[utils]{help}}).
-#' When no local matches are found, Rdocumentation will ignore local libraries and search in the online database.
+#' When no local matches are found, RDocumentation will ignore local libraries and search in the online database.
 #' @param verbose logical; if \code{TRUE}, the file name is reported.
 #' @param try.all.packages logical; see Note on \code{\link[utils]{help}}.
-#' @param help_type only works if the user is offline, otherwise documentation is viewed on Rdocumentation.org in the help-panel
+#' @param help_type only works if the user is offline, otherwise documentation is viewed on RDocumentation.org in the help-panel
 #' character string: the type of help required. Possible values are code{"text"}, \code{"html"} and code{"pdf"}. Case is ignored, and partial matching is allowed.
 #' @examples
-#' help(package=Rdocumentation)
-#' help(centre,ftsa)
-#' @seealso \url{http://www.rdocumentation.org} for the online version of the documentation, \code{\link[Rdocumentation]{help.search}} for finding help on vague topics or \code{\link[utils]{help}} for 
+#' help(package=RDocumentation)
+#' help(strsplit,base)
+#' @seealso \url{http://www.RDocumentation.org} for the online version of the documentation, \code{\link[RDocumentation]{help.search}} for finding help on vague topics or \code{\link[utils]{help}} for 
 #' documentation of the offline help.
 #' @export
 #' @importFrom proto proto
+#' @importFrom utils help
 help <- with(proto(environment(help), help = utils::help, browseURL = .browseUrl.help, `class<-` = `.class.help<-`, find.package = find.package.help), help)
 this.help <- with(proto(environment(help), help = utils::help, browseURL = .browseUrl.help, `class<-` = `.class.help<-`, find.package = find.package.help), help)
-#' Search the Help System on Rdocumentation or local if offline
+#' Search the Help System on RDocumentation or local if offline
 #'
 #'Allows for searching the help system for documentation matching a given character string in the (file) name, alias, title, concept or keyword entries (or any combination thereof),
 #'using either fuzzy matching(\code{\link[base]{agrep}}) or regular expression (\code{\link[base]{regex}}) matching.
@@ -303,11 +315,12 @@ this.help <- with(proto(environment(help), help = utils::help, browseURL = .brow
 #' @param apropos a character string to be matched in the help page topics and title.
 #' @param keyword a character string to be matched in the help page ‘keywords’. ‘Keywords’ are really categories: the standard categories are listed in file ‘R.home("doc")/KEYWORDS’
 #' (see also the example) and some package writers have defined their own. If \code{keyword} is specified, \code{agrep} defaults to \code{FALSE}.
+#' @param whatis a character string to be matched in the help page topics.
 #' @param ignore.case a logical. If \code{TRUE}, case is ignored during matching; if \code{FALSE}, pattern matching is case sensitive. If no local matches are found, the online search is used, which is always non case-sensitive.
 #' @param package a character vector with the names of packages to search through, or \code{NULL} in which case all available packages in the library trees specified by \code{lib.loc} are searched.
-#' if no matches are found, the rdocumentation.org database is searched.
+#' if no matches are found, the RDocumentation.org database is searched.
 #' @param lib.loc a character vector describing the location of R library trees to search through, or \code{NULL}. The default value of \code{NULL} corresponds to all libraries currently known. If no matches are found in the given library,
-#' the online search of Rdocumentation is used.
+#' the online search of RDocumentation is used.
 #' @param help.db a character string giving the file path to a previously built and saved help database, or \code{NULL}.
 #' @param verbose logical; if \code{TRUE}, the search process is traced. Integer values are also accepted, with \code{TRUE} being equivalent to \code{2},
 #' ' and \code{1} being less verbose. On Windows a progress bar is shown during rebuilding, and on Unix a heartbeat is shown for \code{verbose = 1} and a package-by-package list for \code{verbose >= 2}.
@@ -318,9 +331,7 @@ this.help <- with(proto(environment(help), help = utils::help, browseURL = .brow
 #' otherwise, it is taken to contain a regular expression (\code{\link[base]{regex}}) to be matched via \code{\link[base]{grep}}. If \code{FALSE},
 #' approximate matching is not used. Otherwise, one can give a numeric or a list specifying the maximal distance for the approximate match, see argument \code{max.distance} in the documentation for agrep.
 #' @param use_UTF8 logical: should results be given in UTF-8 encoding? Also changes the meaning of regexps in \code{agrep} to be Perl regexps. This does not have effect when the online database is used.
-#' @param types a character vector listing the types of documentation to search. The entries must be abbreviations of \code{"vignette"}, \code{"help"} or \code{"demo"}. Results will be presented in the order specified.
-#' @param field a single value of \code{fields} to search
-#' 
+#' @param types a character vector listing the types of documentation to search. The entries must be abbreviations of \code{"vignette"}, \code{"help"} or \code{"demo"}. Results will be presented in the order specified. 
 #' @examples
 #' help.search("linear models")    # In case you forgot how to fit linear
 #'                                 # models
@@ -333,22 +344,23 @@ this.help <- with(proto(environment(help), help = utils::help, browseURL = .brow
 #'                                 # matching 'print'
 #' help.search(apropos = "print")  # The same
 #'
-#' help.search(keyword = "hplot")  # All help pages documenting high-level
-#'                                 # plots.
+#' help.search(keyword = "hplot",fields=c("alias"))  # All help pages documenting high-level
+#'                                                   # plots.
 #' file.show(file.path(R.home("doc"), "KEYWORDS"))  # show all keywords
 #'
 #' ## Help pages with documented topics starting with 'try'.
 #' help.search("\\btry", fields = "alias")
-#' @seealso \url{http://www.rdocumentation.org} for the online version of the documentation, \code{\link[Rdocumentation]{help}} for finding help on non-vague topics or \code{\link[utils]{help.search}} for 
+#' @seealso \url{http://www.rdocumentation.org} for the online version of the documentation, \code{\link[RDocumentation]{help}} for finding help on non-vague topics or \code{\link[utils]{help.search}} for 
 #' documentation of the offline help.
 #' @export
 #' @importFrom proto proto
+#' @importFrom utils help.search
 help.search <- with(proto(environment(help), help.search = utils::help.search, `class<-` = `.class.help<-`), help.search)
 this.help.search <- with(proto(environment(help), help.search = utils::help.search, `class<-` = `.class.help<-`), help.search)
 
-#' Rdocumentation shortcuts
+#' RDocumentation shortcuts
 #'
-#' These functions provide access to Rdocumentation. Documentation on a topic with name name (typically, an R object or a data set) can be displayed by either help("name") or ?name.
+#' These functions provide access to RDocumentation. Documentation on a topic with name name (typically, an R object or a data set) can be displayed by either help("name") or ?name.
 #'
 #' @param topic Usually, a name or character string specifying the topic for which help is sought. Alternatively, a function call to ask for documentation on a corresponding S4 method: 
 #' see the section on S4 method documentation in \code{\link[utils]{?}}. The calls pkg::topic and pkg:::topic are treated specially, and look for help on topic in package pkg.
