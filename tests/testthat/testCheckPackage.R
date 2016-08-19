@@ -1,4 +1,4 @@
-library(RDocumentation)
+library(Rdocumentation)
 context("check_package")
 
 test_that("check_base_package",{

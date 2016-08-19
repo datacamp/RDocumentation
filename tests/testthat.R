@@ -1,4 +1,4 @@
 library(testthat)
-library(RDocumentation)
+library(Rdocumentation)
 
-test_check("RDocumentation")
+test_check("Rdocumentation")

@@ -1,4 +1,4 @@
-library(RDocumentation)
+library(Rdocumentation)
 context("help.search")
 
 test_that("help_search",{

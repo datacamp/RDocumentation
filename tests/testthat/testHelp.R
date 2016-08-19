@@ -1,4 +1,4 @@
-library(RDocumentation)
+library(Rdocumentation)
 context("help")
 
 test_that("help_normal",{

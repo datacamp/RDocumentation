@@ -1,7 +1,7 @@
 
 #' Return the url for RDocumentation
 #'
-#' @return The url for Rdocumentation
+#' @return The url for RDocumentation
 #' @examples
 #' rdocs_url()
 #' @export
@@ -12,7 +12,7 @@ rdocs_url <- function(){
     login()
     Rprofile <- .getRProfile()
     names <- scan(Rprofile, what=character(),quiet=TRUE)
-    if (length(grep("RDocumentation",names)) == 0){
+    if (length(grep("Rdocumentation",names)) == 0){
         .view_help(paste0(rdocs_url(),"rstudio/make_default?viewer_pane=1"),"DEFAULT",FALSE,"","")
     }
 }
@@ -37,8 +37,8 @@ rdocs_url <- function(){
 #' @importFrom utils read.table
 login<-function(){ 
     # The jsonlite package turns every variable into an array, which the /login doesn't accept, so the json is parsed with rjson
-    if(file.exists(paste0(find.package("RDocumentation"),"/config/creds.txt")) && file.info(paste0(find.package("RDocumentation"),"/config/creds.txt"))$size > 0){
-        creds <- read.table(paste0(find.package("RDocumentation"),"/config/creds.txt"), header = FALSE)
+    if(file.exists(paste0(find.package("Rdocumentation"),"/config/creds.txt")) && file.info(paste0(find.package("Rdocumentation"),"/config/creds.txt"))$size > 0){
+        creds <- read.table(paste0(find.package("Rdocumentation"),"/config/creds.txt"), header = FALSE)
         go_to_url = paste0(rdocs_url(),"login")
 
         tryCatch({
@@ -56,7 +56,7 @@ login<-function(){
         )
     }
     else{
-         dir.create(paste0(find.package("RDocumentation"),"/config"), showWarnings = FALSE, recursive = TRUE)
+         dir.create(paste0(find.package("Rdocumentation"),"/config"), showWarnings = FALSE, recursive = TRUE)
     }
 
 }
@@ -98,7 +98,7 @@ hideViewer <- function(){
         body = rjson::toJSON(list(packages = as.character(paste(packages,sep = "",collapse = ",")), topic_names = as.character(paste(topic_names, sep = "", collapse = ",")),
                            call = as.character(paste(attributes(package)$call, sep = "", collapse = ",")), topic = as.character(attributes(package)$topic),
                            tried_all_packages = as.character(attributes(package)$tried_all_packages), help_type = as.character(attributes(package)$type)))
-                           go_to_url = paste0(RDocumentation::rdocs_url(), "rstudio/normal/help?viewer_pane=1")
+                           go_to_url = paste0(Rdocumentation::rdocs_url(), "rstudio/normal/help?viewer_pane=1")
     }
     else{
         hsearch_db_fields <- c("alias", "concept", "keyword", "name", "title")
@@ -111,7 +111,7 @@ hideViewer <- function(){
                            types = as.character(paste(package$types, sep = "", collapse = ",")), package = as.character(package[7]),
                            matching_titles = as.character(gsub(" ", "", toString(unique(package$matches$Topic)), fixed = TRUE)),
                            matching_packages = as.character(gsub(" ", "", toString(unique(package$matches$Package)), fixed = TRUE))))
-                           go_to_url = paste0(RDocumentation::rdocs_url(),"rstudio/search/help?viewer_pane=1")
+                           go_to_url = paste0(Rdocumentation::rdocs_url(),"rstudio/search/help?viewer_pane=1")
     }
     return (.view_help(go_to_url, body, TRUE, package, value))
 }
@@ -120,7 +120,7 @@ hideViewer <- function(){
 .browseUrl.help <- function(url, browser){
     parsing = substring(url,18, nchar(url)-18)
     parts = strsplit(parsing, "/")
-    go_to_url = paste0(RDocumentation::rdocs_url(), "rstudio/package/", parts[[1]][3], "?viewer_pane=1")
+    go_to_url = paste0(Rdocumentation::rdocs_url(), "rstudio/package/", parts[[1]][3], "?viewer_pane=1")
     return (.view_help(go_to_url, "", FALSE, url, browser))
 }
 #' @export
@@ -132,7 +132,7 @@ hideViewer <- function(){
 #' @importFrom rjson toJSON
 #' @importFrom utils browseURL
 .view_help <- function(go_to_url, body, post, arg1, arg2){
-    tempDir <- paste0(find.package("RDocumentation"), "/doc")
+    tempDir <- paste0(find.package("Rdocumentation"), "/doc")
     htmlFile <- file.path(tempDir, "index.html")
     if (!file.exists(tempDir)){
         dir.create(tempDir)
@@ -176,12 +176,12 @@ hideViewer <- function(){
             if (body == "DEFAULT"){
                 p <- tools::startDynamicHelp(NA)
                 browser <-  getOption("browser")
-                if (file.exists(paste0(find.package("RDocumentation"), "/default.html"))){
-                    tempDir <- paste0(find.package("RDocumentation"), "/doc")
+                if (file.exists(paste0(find.package("Rdocumentation"), "/default.html"))){
+                    tempDir <- paste0(find.package("Rdocumentation"), "/doc")
                     htmlFile <- file.path(tempDir, "index.html")
                     cssFile <- file.path(tempDir, "default.css")
-                    file.copy(paste0(find.package("RDocumentation"), "/default.html"), htmlFile, overwrite = TRUE)
-                    file.copy(paste0(find.package("RDocumentation"), "/css/default.css"), cssFile, overwrite = TRUE)
+                    file.copy(paste0(find.package("Rdocumentation"), "/default.html"), htmlFile, overwrite = TRUE)
+                    file.copy(paste0(find.package("Rdocumentation"), "/css/default.css"), cssFile, overwrite = TRUE)
                     browseURL(paste0("http://127.0.0.1:", p, "/library/rdocumentation/doc/index.html?viewer_pane=1&Rstudio_port=",
                                      as.character(Sys.getenv("RSTUDIO_SESSION_PORT")), "&RS_SHARED_SECRET=", as.character(Sys.getenv("RS_SHARED_SECRET"))), browser)
                 }
