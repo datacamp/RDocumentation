@@ -7,8 +7,8 @@ Enhance the search/help functionality in R with [RDocumentation.org](http://www.
 To install the package, use `devtools`:
 
 ```R
-devtools::install_github("datacamp/RDocumentation")
-library(RDocumentation)
+devtools::install_github("datacamp/Rdocumentation")
+library(Rdocumentation)
 ```
 
 The package overwrite the basic help functions from the utils package:

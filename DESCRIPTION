@@ -1,4 +1,4 @@
-Package: RDocumentation
+Package: Rdocumentation
 Type: Package
 Title: Integrate R with Rdocumentation.org
 Version: 0.1

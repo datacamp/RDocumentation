@@ -25,8 +25,7 @@ rdocs_url <- function(){
 }
 #' Log you in to RDocumentation if credentials are saved from last time
 #'
-#' Logs you in to RDocumentation if credentials from a previous session where saved. To save credentials, please login using the login button from a random help page on RDocumentation.
-#'
+#' Logs you in to RDocumentation if credentials from a previous session where saved. To save credentials, please login using the login button from a random help page on RDocumentation#'
 #' @examples
 #' login()
 #' @export
@@ -166,7 +165,6 @@ hideViewer <- function(){
         
     },
     error = function(cond){
-        cat("Could not reach RDocumentation, either your internet connection is bad or RDocumentation is offline")
         if (package_not_local != ""){
             stop(paste0("package ", package_not_local, " is not in your local library"))
         }

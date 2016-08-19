@@ -1,5 +1,6 @@
 \name{RDocumentation-package}
 \alias{RDocumentation-package}
+\alias{Rdocumentation}
 \alias{RDocumentation}
 \docType{package}
 \title{
