@@ -166,7 +166,7 @@ hideViewer <- function(){
         
     },
     error = function(cond){
-        print("Could not reach RDocumentation, either your internet connection is bad or RDocumentation is offline")
+        cat("Could not reach RDocumentation, either your internet connection is bad or RDocumentation is offline")
         if (package_not_local != ""){
             stop(paste0("package ", package_not_local, " is not in your local library"))
         }
