@@ -25,7 +25,8 @@ rdocs_url <- function(){
 }
 #' Log you in to RDocumentation if credentials are saved from last time
 #'
-#' Logs you in to RDocumentation if credentials from a previous session where saved. To save credentials, please login using the login button from a random help page on RDocumentation#'
+#' Logs you in to RDocumentation if credentials from a previous session where saved. To save credentials, please login using the login button from a random help page on RDocumentation
+#'
 #' @examples
 #' login()
 #' @export
