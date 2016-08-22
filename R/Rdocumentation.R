@@ -8,14 +8,7 @@
 rdocs_url <- function(){
   return ("http://staging.rdocumentation.org/")
 }
-.onLoad <- function(libName,pkgeName){
-    login()
-    Rprofile <- .getRProfile()
-    names <- scan(Rprofile, what=character(),quiet=TRUE)
-    if (length(grep("Rdocumentation",names)) == 0){
-        .view_help(paste0(rdocs_url(),"rstudio/make_default?viewer_pane=1"),"DEFAULT",FALSE,"","")
-    }
-}
+
 .getRProfile<-function(){
     if(!file.exists(file.path(Sys.getenv("HOME"),".Rprofile"))){    
         file.create(file.path(Sys.getenv("HOME"),".Rprofile"),quiet=TRUE)
@@ -129,6 +122,7 @@ hideViewer <- function(){
 #' @importFrom httr status_code
 #' @importFrom httr content
 #' @importFrom httr content_type_json
+#' @importFrom httr timeout
 #' @importFrom rjson toJSON
 #' @importFrom utils browseURL
 .view_help <- function(go_to_url, body, post, arg1, arg2){
@@ -146,17 +140,16 @@ hideViewer <- function(){
     assign("package_not_local", "", envir = environment(help))
     tryCatch({
         if(post){
-            r <- POST(go_to_url, config = (content_type_json()), body = body, encode = "json")
+            r <- POST(go_to_url, config = (content_type_json()), body = body, encode = "json", timeout(getOption("Rdocumentation.timeOut")))
         }
         else{
-            r <- GET(go_to_url)
-            
+            r <- GET(go_to_url, timeout(getOption("Rdocumentation.timeOut")))            
         }
         if(status_code(r) == 200){
             writeBin(content(r, "raw"), htmlFile)
             p <- tools::startDynamicHelp(NA)
             browser <- getOption("browser")
-            browseURL(paste0("http://127.0.0.1:", p, "/library/RDocumentation/doc/index.html?viewer_pane=1&Rstudio_port=",
+            browseURL(paste0("http://127.0.0.1:", p, "/library/Rdocumentation/doc/index.html?viewer_pane=1&Rstudio_port=",
                 as.character(Sys.getenv("RSTUDIO_SESSION_PORT")), "&RS_SHARED_SECRET=", as.character(Sys.getenv("RS_SHARED_SECRET"))), browser)
             return (invisible())
         }
@@ -296,6 +289,9 @@ find.package.help <- function(packages, lib, verbose = FALSE){
 #' help(strsplit,base)
 #' @seealso \url{http://www.RDocumentation.org} for the online version of the documentation, \code{\link[RDocumentation]{help.search}} for finding help on vague topics or \code{\link[utils]{help}} for 
 #' documentation of the offline help.
+#'
+#' @details for slow internet connections, a timeout can be set for getting the page of Rdocumentation via options("Rdocumentation.timeOut" = \code{nb_of_seconds}) the default timeout is 3 seconds
+#'
 #' @export
 #' @importFrom proto proto
 #' @importFrom utils help
@@ -351,6 +347,9 @@ this.help <- with(proto(environment(help), help = utils::help, browseURL = .brow
 #' help.search("\\btry", fields = "alias")
 #' @seealso \url{http://www.rdocumentation.org} for the online version of the documentation, \code{\link[RDocumentation]{help}} for finding help on non-vague topics or \code{\link[utils]{help.search}} for 
 #' documentation of the offline help.
+#'
+#' @details for slow internet connections, a timeout can be set for getting the page of Rdocumentation via options("Rdocumentation.timeOut" = \code{nb_of_seconds}) the default timeout is 3 seconds
+#'
 #' @export
 #' @importFrom proto proto
 #' @importFrom utils help.search
