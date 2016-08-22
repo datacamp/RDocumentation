@@ -6,7 +6,7 @@
 #' rdocs_url()
 #' @export
 rdocs_url <- function(){
-  return ("http://staging.rdocumentation.org/")
+  return ("http://localhost:1337/")
 }
 
 .getRProfile<-function(){
@@ -26,6 +26,7 @@ rdocs_url <- function(){
 #' @importFrom httr POST
 #' @importFrom httr status_code
 #' @importFrom httr content_type
+#' @importFrom httr cookies
 #' @importFrom rjson toJSON
 #' @importFrom utils read.table
 login<-function(){ 
@@ -123,6 +124,7 @@ hideViewer <- function(){
 #' @importFrom httr content
 #' @importFrom httr content_type_json
 #' @importFrom httr timeout
+#' @importFrom httr cookies
 #' @importFrom rjson toJSON
 #' @importFrom utils browseURL
 .view_help <- function(go_to_url, body, post, arg1, arg2){
@@ -146,11 +148,17 @@ hideViewer <- function(){
             r <- GET(go_to_url, timeout(getOption("Rdocumentation.timeOut")))            
         }
         if(status_code(r) == 200){
+            if(file.exists(paste0(find.package("Rdocumentation"),"/config/creds.txt")) && file.info(paste0(find.package("Rdocumentation"),"/config/creds.txt"))$size > 0){
+                creds <- as.character(read.table(paste0(find.package("Rdocumentation"),"/config/creds.txt"), header = FALSE)$V1)
+            }
+            else{
+                creds = ""
+            }
             writeBin(content(r, "raw"), htmlFile)
             p <- tools::startDynamicHelp(NA)
             browser <- getOption("browser")
             browseURL(paste0("http://127.0.0.1:", p, "/library/Rdocumentation/doc/index.html?viewer_pane=1&Rstudio_port=",
-                as.character(Sys.getenv("RSTUDIO_SESSION_PORT")), "&RS_SHARED_SECRET=", as.character(Sys.getenv("RS_SHARED_SECRET"))), browser)
+                as.character(Sys.getenv("RSTUDIO_SESSION_PORT")), "&RS_SHARED_SECRET=", as.character(Sys.getenv("RS_SHARED_SECRET")),"&",creds),browser)
             return (invisible())
         }
         else{
