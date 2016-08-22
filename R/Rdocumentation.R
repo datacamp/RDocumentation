@@ -6,7 +6,7 @@
 #' rdocs_url()
 #' @export
 rdocs_url <- function(){
-  return ("http://localhost:1337/")
+  return ("http://staging.rdocumentation.org/")
 }
 
 .getRProfile<-function(){
@@ -237,7 +237,6 @@ check_package <- function(mypkg,version){
 #' ## install_package("RDocumentation",3)
 #' @export
 #' @importFrom githubinstall githubinstall
-#' @importFrom BiocInstaller biocLite
 #' @importFrom utils install.packages
 #' @importFrom utils installed.packages
 install_package <- function(mypkg, type){
