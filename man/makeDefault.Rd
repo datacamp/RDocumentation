@@ -2,11 +2,11 @@
 % Please edit documentation in R/Rdocumentation.R
 \name{makeDefault}
 \alias{makeDefault}
-\title{Makes the Rdocumentation package the default help-package.}
+\title{Makes the RDocumentation package the default help-package.}
 \usage{
 makeDefault()
 }
 \description{
-Makes the Rdocumentation package the default help-package.
+Makes the RDocumentation package the default help-package.
 }
 

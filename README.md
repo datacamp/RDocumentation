@@ -1,6 +1,9 @@
 ![rdocumentation_package_banner](https://cloud.githubusercontent.com/assets/1741726/17591508/cb39a3d6-5fde-11e6-9b49-1434dd417c64.png)
 
-Enhance the search/help functionality in R with [Rdocumentation.org](http://www.Rdocumentation.org), and discover what R packages are most popular.
+
+[![Rdoc](http://staging.rdocumentation.org/badges/version/Rdocumentation)](http://rdocumentation.org/packages/Rdocumentation)
+
+Enhance the search/help functionality in R with [RDocumentation.org](http://www.Rdocumentation.org), and discover what R packages are most popular.
 
 # Installation
 
@@ -19,7 +22,7 @@ The package overwrite the basic help functions from the utils package:
 
 #Features:
 
-* Search through all CRAN, Bioconductor, Github packages and their archives thanks to [Rdocumentation](http://www.rdocumentation.org).
+* Search through all CRAN, Bioconductor, Github packages and their archives thanks to [RDocumentation](http://www.rdocumentation.org).
 
 * Browse beautifully formatted and designed help pages.
 

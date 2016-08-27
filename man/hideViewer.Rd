@@ -2,11 +2,11 @@
 % Please edit documentation in R/Rdocumentation.R
 \name{hideViewer}
 \alias{hideViewer}
-\title{Redirects the viewer to the Rdocumentation help page.}
+\title{Redirects the viewer to the RDocumentation help page.}
 \usage{
 hideViewer()
 }
 \description{
-Redirects the viewer to the Rdocumentation help page.
+Redirects the viewer to the RDocumentation help page.
 }
 

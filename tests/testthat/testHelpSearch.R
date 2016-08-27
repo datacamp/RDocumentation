@@ -4,7 +4,6 @@ context("help.search")
 test_that("help_search",{
 	expect_equal(help.search("whatever"),NULL)
 	expect_equal(help.search("help"),NULL)
-	
 });
 
 test_that("test_with_fields",{

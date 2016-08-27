@@ -15,7 +15,8 @@ install_package(mypkg, type)
 Installs the given package
 }
 \examples{
-install_package("dplyr",1)
-install_package("Rdocumentation",3)
+## Not run
+## install_package("dplyr",1)
+## install_package("RDocumentation",3)
 }
 

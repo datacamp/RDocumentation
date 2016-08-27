@@ -10,6 +10,8 @@ License: GPL (>= 2)
 Imports:
     httr (>= 1.2.1),
     proto (>= 0.3-10),
-    rjson (>= 0.2.15)
+    rjson (>= 0.2.15),
+    utils (>= 3.3.1),
+    githubinstall
 RoxygenNote: 5.0.1
 Suggests: testthat

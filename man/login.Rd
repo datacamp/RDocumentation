@@ -2,12 +2,12 @@
 % Please edit documentation in R/Rdocumentation.R
 \name{login}
 \alias{login}
-\title{Log you in to Rdocumentation if credentials are saved from last time}
+\title{Log you in to RDocumentation if credentials are saved from last time}
 \usage{
 login()
 }
 \description{
-Logs you in to Rdocumentation if credentials from a previous session where saved. To save credentials, please login using the login button from a random help page on Rdocumentation.
+Logs you in to RDocumentation if credentials from a previous session where saved. To save credentials, please login using the login button from a random help page on RDocumentation
 }
 \examples{
 login()

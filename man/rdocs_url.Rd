@@ -2,15 +2,15 @@
 % Please edit documentation in R/Rdocumentation.R
 \name{rdocs_url}
 \alias{rdocs_url}
-\title{Return the url for Rdocumentation}
+\title{Return the url for RDocumentation}
 \usage{
 rdocs_url()
 }
 \value{
-The url for Rdocumentation
+The url for RDocumentation
 }
 \description{
-Return the url for Rdocumentation
+Return the url for RDocumentation
 }
 \examples{
 rdocs_url()
