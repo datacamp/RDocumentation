@@ -18,7 +18,7 @@ FALSE if the package is not installed, otherwise the versionnumber of the packag
 Check if a package is installed for the user.
 }
 \examples{
-check_package("RDocumentation","0.2")
+check_package("Rdocumentation","0.2")
 check_package("utils","3.3.1")
 }
 

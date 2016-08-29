@@ -6,7 +6,7 @@
 #' rdocs_url()
 #' @export
 rdocs_url <- function(){
-  return ("http://www.rdocumentation.org/")
+  return ("http://staging.rdocumentation.org/")
 }
 
 .getRProfile<-function(){
@@ -59,7 +59,7 @@ login<-function(){
 #' @export
 makeDefault <- function(){
     Rprofile <- .getRProfile()
-    write("options(defaultPackages = c(getOption('defaultPackages'), 'RDocumentation'))", file = Rprofile, append = TRUE)
+    write("options(defaultPackages = c(getOption('defaultPackages'), 'Rdocumentation'))", file = Rprofile, append = TRUE)
     hideViewer()
     return (invisible())
 }
@@ -125,6 +125,7 @@ hideViewer <- function(){
 #' @importFrom httr content_type_json
 #' @importFrom httr timeout
 #' @importFrom httr cookies
+#' @importFrom httr add_headers
 #' @importFrom rjson toJSON
 #' @importFrom utils browseURL
 .view_help <- function(go_to_url, body, post, arg1, arg2){
@@ -145,7 +146,7 @@ hideViewer <- function(){
             r <- POST(go_to_url, config = (content_type_json()), body = body, encode = "json", timeout(getOption("Rdocumentation.timeOut")))
         }
         else{
-            r <- GET(go_to_url, timeout(getOption("Rdocumentation.timeOut")))            
+            r <- GET(go_to_url,add_headers(Accept = "text/html"),timeout(getOption("Rdocumentation.timeOut")))            
         }
         if(status_code(r) == 200){
             if(file.exists(paste0(find.package("Rdocumentation"),"/config/creds.txt")) && file.info(paste0(find.package("Rdocumentation"),"/config/creds.txt"))$size > 0){
@@ -167,6 +168,7 @@ hideViewer <- function(){
         
     },
     error = function(cond){
+        print(cond)
         if (package_not_local != ""){
             stop(paste0("package ", package_not_local, " is not in your local library"))
         }
@@ -200,7 +202,7 @@ hideViewer <- function(){
 #' @param version the latest version to be checked
 #' @return FALSE if the package is not installed, otherwise the versionnumber of the package
 #' @examples
-#' check_package("RDocumentation","0.2")
+#' check_package("Rdocumentation","0.2")
 #' check_package("utils","3.3.1")
 #' @export
 #' @importFrom utils packageVersion
@@ -234,7 +236,7 @@ check_package <- function(mypkg,version){
 #' @examples
 #' ## Not run
 #' ## install_package("dplyr",1)
-#' ## install_package("RDocumentation",3)
+#' ## install_package("Rdocumentation",3)
 #' @export
 #' @importFrom githubinstall githubinstall
 #' @importFrom utils install.packages
@@ -292,9 +294,9 @@ find.package.help <- function(packages, lib, verbose = FALSE){
 #' @param help_type only works if the user is offline, otherwise documentation is viewed on RDocumentation.org in the help-panel
 #' character string: the type of help required. Possible values are code{"text"}, \code{"html"} and code{"pdf"}. Case is ignored, and partial matching is allowed.
 #' @examples
-#' help(package=RDocumentation)
+#' help(package=Rdocumentation)
 #' help(strsplit,base)
-#' @seealso \url{http://www.RDocumentation.org} for the online version of the documentation, \code{\link[RDocumentation]{help.search}} for finding help on vague topics or \code{\link[utils]{help}} for 
+#' @seealso \url{http://www.RDocumentation.org} for the online version of the documentation, \code{\link[Rdocumentation]{help.search}} for finding help on vague topics or \code{\link[utils]{help}} for 
 #' documentation of the offline help.
 #'
 #' @details for slow internet connections, a timeout can be set for getting the page of Rdocumentation via options("Rdocumentation.timeOut" = \code{nb_of_seconds}) the default timeout is 3 seconds
@@ -352,7 +354,7 @@ this.help <- with(proto(environment(help), help = utils::help, browseURL = .brow
 #'
 #' ## Help pages with documented topics starting with 'try'.
 #' help.search("\\btry", fields = "alias")
-#' @seealso \url{http://www.rdocumentation.org} for the online version of the documentation, \code{\link[RDocumentation]{help}} for finding help on non-vague topics or \code{\link[utils]{help.search}} for 
+#' @seealso \url{http://www.rdocumentation.org} for the online version of the documentation, \code{\link[Rdocumentation]{help}} for finding help on non-vague topics or \code{\link[utils]{help.search}} for 
 #' documentation of the offline help.
 #'
 #' @details for slow internet connections, a timeout can be set for getting the page of Rdocumentation via options("Rdocumentation.timeOut" = \code{nb_of_seconds}) the default timeout is 3 seconds

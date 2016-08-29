@@ -41,8 +41,11 @@ Some topics need to be quoted (by backticks) or given as a character string. The
 
 These functions provide access to RDocumentation. Documentation on a topic with name name (typically, an R object or a data set) can be displayed by either help("name") or ?name.
 }
+\details{
+for slow internet connections, a timeout can be set for getting the page of Rdocumentation via options("Rdocumentation.timeOut" = \code{nb_of_seconds}) the default timeout is 3 seconds
+}
 \examples{
-help(package=RDocumentation)
+help(package=Rdocumentation)
 help(strsplit,base)
 
 ?"for"                  # but quotes/backticks are needed
@@ -73,10 +76,8 @@ help(strsplit,base)
 # ## End(Not run)
 }
 \seealso{
-\url{http://www.RDocumentation.org} for the online version of the documentation, \code{\link[RDocumentation]{help.search}} for finding help on vague topics or \code{\link[utils]{help}} for 
+\url{http://www.RDocumentation.org} for the online version of the documentation, \code{\link[Rdocumentation]{help.search}} for finding help on vague topics or \code{\link[utils]{help}} for 
 documentation of the offline help.
-
-for slow internet connections, a timeout can be set for getting the page of Rdocumentation via options("Rdocumentation.timeOut" = \code{nb_of_seconds}) the default timeout is 3 seconds
 }
 \keyword{documentation}
 

@@ -54,6 +54,9 @@ Allows for searching the help system for documentation matching a given characte
 using either fuzzy matching(\code{\link[base]{agrep}}) or regular expression (\code{\link[base]{regex}}) matching.
 Names and titles of the matched help entries are displayed nicely formatted. Vignette names, titles and keywords and demo names and titles may also be searched.
 }
+\details{
+for slow internet connections, a timeout can be set for getting the page of Rdocumentation via options("Rdocumentation.timeOut" = \code{nb_of_seconds}) the default timeout is 3 seconds
+}
 \examples{
 help.search("linear models")    # In case you forgot how to fit linear
                                 # models
@@ -74,9 +77,7 @@ file.show(file.path(R.home("doc"), "KEYWORDS"))  # show all keywords
 help.search("\\\\btry", fields = "alias")
 }
 \seealso{
-\url{http://www.rdocumentation.org} for the online version of the documentation, \code{\link[RDocumentation]{help}} for finding help on non-vague topics or \code{\link[utils]{help.search}} for 
+\url{http://www.rdocumentation.org} for the online version of the documentation, \code{\link[Rdocumentation]{help}} for finding help on non-vague topics or \code{\link[utils]{help.search}} for 
 documentation of the offline help.
-
-for slow internet connections, a timeout can be set for getting the page of Rdocumentation via options("Rdocumentation.timeOut" = \code{nb_of_seconds}) the default timeout is 3 seconds
 }
 

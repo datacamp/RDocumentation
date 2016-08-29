@@ -25,7 +25,7 @@ Maintainer: Jonathan Cornelissen <Jonathan@datamind.org>
 }
 \keyword{ package }
 \seealso{
-\code{\link[<pkg>:<pkg>-utils]{<pkg>}}
+\code{\link[utils]{help}}
 }
 \examples{
 help(mean,base)

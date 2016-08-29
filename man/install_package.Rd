@@ -17,6 +17,6 @@ Installs the given package
 \examples{
 ## Not run
 ## install_package("dplyr",1)
-## install_package("RDocumentation",3)
+## install_package("Rdocumentation",3)
 }
 
