@@ -4,7 +4,7 @@ Title: Integrate R with Rdocumentation.org
 Version: 0.3
 Date: 2013-07-26
 Author: Jonathan Cornelissen (for Rdocumentation.org)
-Maintainer: Jonathan Cornelissen <Jonathan@datamind.org>
+Maintainer: Ludovic Vannoorenberghe <ludovic@datacamp.com>
 Description: Enhance the search/help functionality in R with Rdocumentation.org
 License: GPL (>= 2)
 Imports:
