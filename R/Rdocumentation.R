@@ -16,44 +16,7 @@ rdocs_url <- function(){
     Rprofile<-file.path(Sys.getenv("HOME"),".Rprofile")
     return (Rprofile)
 }
-#' Log you in to RDocumentation if credentials are saved from last time
-#'
-#' Logs you in to RDocumentation if credentials from a previous session where saved. To save credentials, please login using the login button from a random help page on RDocumentation
-#'
-#' @examples
-#' login()
-#' @export
-#' @importFrom httr POST
-#' @importFrom httr status_code
-#' @importFrom httr content_type
-#' @importFrom httr cookies
-#' @importFrom rjson toJSON
-#' @importFrom utils read.table
-login<-function(){ 
-    # The jsonlite package turns every variable into an array, which the /login doesn't accept, so the json is parsed with rjson
-    if(file.exists(paste0(find.package("Rdocumentation"),"/config/creds.txt")) && file.info(paste0(find.package("Rdocumentation"),"/config/creds.txt"))$size > 0){
-        creds <- read.table(paste0(find.package("Rdocumentation"),"/config/creds.txt"), header = FALSE)
-        go_to_url = paste0(rdocs_url(),"login")
 
-        tryCatch({
-                r <- POST(go_to_url, body = as.character(creds$V1), content_type("application/x-www-form-urlencoded"))
-                if (length(grep("Invalid Username or password",content(r,"text"))) > 0) {
-                    cat("there is something wrong with your credentials, please try logging in to the site in the help panel")
-                }
-                else{
-                    cat("logging you in to RDocumentation")
-                }
-            },
-            error = function(cond){
-                cat("Could not log you in, something is wrong with your internet connection or RDocumentation is offline")
-            }
-        )
-    }
-    else{
-         dir.create(paste0(find.package("Rdocumentation"),"/config"), showWarnings = FALSE, recursive = TRUE)
-    }
-
-}
 #' Makes the RDocumentation package the default help-package.
 #'
 #' @export
@@ -72,7 +35,6 @@ hideViewer <- function(){
 }
 
 # Overwrites the class<- function, converts help answers to json and sends them to RDocumentation
-# @importFrom rjson toJSON
 `.class.help<-` <- function(package, value){
     if (value == "help_files_with_topic"){
         if (!exists("package_not_local", envir = environment(help)) || environment(help)$package_not_local == ""){
@@ -89,9 +51,9 @@ hideViewer <- function(){
             packages <- environment(help)$package_not_local
             topic_names <- ""
         }     
-        body = rjson::toJSON(list(packages = as.character(paste(packages,sep = "",collapse = ",")), topic_names = as.character(paste(topic_names, sep = "", collapse = ",")),
+        body = list(packages = as.character(paste(packages,sep = "",collapse = ",")), topic_names = as.character(paste(topic_names, sep = "", collapse = ",")),
                            call = as.character(paste(attributes(package)$call, sep = "", collapse = ",")), topic = as.character(attributes(package)$topic),
-                           tried_all_packages = as.character(attributes(package)$tried_all_packages), help_type = as.character(attributes(package)$type)))
+                           tried_all_packages = as.character(attributes(package)$tried_all_packages), help_type = as.character(attributes(package)$type), called_function="help")
                            go_to_url = paste0(Rdocumentation::rdocs_url(), "rstudio/normal/help?viewer_pane=1")
     }
     else{
@@ -100,22 +62,21 @@ hideViewer <- function(){
         fields = lapply(package$fields, function(e){
             return (elas_search_db_fields[which(hsearch_db_fields == e)])
         })
-        body = rjson::toJSON(list(query = as.character(package[1]), fields = as.character(paste(fields, sep = "", collapse = ",")),
+        body = list(query = as.character(package[1]), fields = as.character(paste(fields, sep = "", collapse = ",")),
                            type = as.character(package[3]), agrep = as.character(package[4]), ignore_case = as.character(package[5]),
                            types = as.character(paste(package$types, sep = "", collapse = ",")), package = as.character(package[7]),
                            matching_titles = as.character(gsub(" ", "", toString(unique(package$matches$Topic)), fixed = TRUE)),
-                           matching_packages = as.character(gsub(" ", "", toString(unique(package$matches$Package)), fixed = TRUE))))
-                           go_to_url = paste0(Rdocumentation::rdocs_url(),"rstudio/search/help?viewer_pane=1")
+                           matching_packages = as.character(gsub(" ", "", toString(unique(package$matches$Package)), fixed = TRUE)), called_function="help_search")
     }
-    return (.view_help(go_to_url, body, TRUE, package, value))
+    return (.view_help(body, package, value))
 }
 
 #' @export
 .browseUrl.help <- function(url, browser){
     parsing = substring(url,18, nchar(url)-18)
     parts = strsplit(parsing, "/")
-    go_to_url = paste0(Rdocumentation::rdocs_url(), "rstudio/package/", parts[[1]][3], "?viewer_pane=1")
-    return (.view_help(go_to_url, "", FALSE, url, browser))
+    body = list( package_name = as.character(parts[[1]][3]), called_function="find_package")
+    return (.view_help(body, url, browser))
 }
 #' @export
 #' @importFrom httr POST
@@ -128,7 +89,9 @@ hideViewer <- function(){
 #' @importFrom httr add_headers
 #' @importFrom rjson toJSON
 #' @importFrom utils browseURL
-.view_help <- function(go_to_url, body, post, arg1, arg2){
+#' @importFrom utils read.table
+.view_help <- function(body, arg1, arg2){
+    go_to_url = paste0(rdocs_url(),"rstudio/view?viewer_pane=1")
     tempDir <- paste0(find.package("Rdocumentation"), "/doc")
     htmlFile <- file.path(tempDir, "index.html")
     if (!file.exists(tempDir)){
@@ -142,12 +105,7 @@ hideViewer <- function(){
     }
     assign("package_not_local", "", envir = environment(help))
     tryCatch({
-        if(post){
-            r <- POST(go_to_url, config = (content_type_json()), body = body, encode = "json", timeout(getOption("Rdocumentation.timeOut")))
-        }
-        else{
-            r <- GET(go_to_url,add_headers(Accept = "text/html"),timeout(getOption("Rdocumentation.timeOut")))            
-        }
+        r <- POST(go_to_url, add_headers(Accept = "text/html"), config = (content_type_json()), body = rjson::toJSON(body), encode = "json", timeout(getOption("Rdocumentation.timeOut")))
         if(status_code(r) == 200){
             if(file.exists(paste0(find.package("Rdocumentation"),"/config/creds.txt")) && file.info(paste0(find.package("Rdocumentation"),"/config/creds.txt"))$size > 0){
                 creds <- as.character(read.table(paste0(find.package("Rdocumentation"),"/config/creds.txt"), header = FALSE)$V1)
@@ -168,30 +126,14 @@ hideViewer <- function(){
         
     },
     error = function(cond){
-        print(cond)
         if (package_not_local != ""){
             stop(paste0("package ", package_not_local, " is not in your local library"))
         }
-        if (post){
+        if (body$called_function == "help" || body$called_function == "help_search"){
             return (baseenv()$`class<-`(arg1,arg2))
         }
-        else{
-            if (body == "DEFAULT"){
-                p <- tools::startDynamicHelp(NA)
-                browser <-  getOption("browser")
-                if (file.exists(paste0(find.package("Rdocumentation"), "/default.html"))){
-                    tempDir <- paste0(find.package("Rdocumentation"), "/doc")
-                    htmlFile <- file.path(tempDir, "index.html")
-                    cssFile <- file.path(tempDir, "default.css")
-                    file.copy(paste0(find.package("Rdocumentation"), "/default.html"), htmlFile, overwrite = TRUE)
-                    file.copy(paste0(find.package("Rdocumentation"), "/css/default.css"), cssFile, overwrite = TRUE)
-                    browseURL(paste0("http://127.0.0.1:", p, "/library/rdocumentation/doc/index.html?viewer_pane=1&Rstudio_port=",
-                                     as.character(Sys.getenv("RSTUDIO_SESSION_PORT")), "&RS_SHARED_SECRET=", as.character(Sys.getenv("RS_SHARED_SECRET"))), browser)
-                }
-            }
-            else{
-                return(utils::browseURL(arg1, arg2))
-            }
+        else if (body$called_function == "find_package"){
+            return(utils::browseURL(arg1, arg2))
         }        
     })
     
