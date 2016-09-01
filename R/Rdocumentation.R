@@ -97,13 +97,13 @@ hideViewer <- function(){
     if (!file.exists(tempDir)){
         dir.create(tempDir)
     }
-    if (exists("package_not_local", envir=environment(help))){
-        package_not_local = environment(help)$package_not_local
+    if (exists("package_not_local", envir = prototype)){
+        package_not_local = prototype$package_not_local
     }
     else{
         package_not_local = ""
     }
-    assign("package_not_local", "", envir = environment(help))
+    assign("package_not_local", "", envir = prototype)
     tryCatch({
         r <- POST(go_to_url, add_headers(Accept = "text/html"), config = (content_type_json()), body = rjson::toJSON(body), encode = "json", timeout(getOption("Rdocumentation.timeOut")))
         if(status_code(r) == 200){
@@ -222,6 +222,8 @@ find.package.help <- function(packages, lib, verbose = FALSE){
     })
 }
 
+prototype<-proto(environment(help), browseURL = .browseUrl.help, `class<-` = `.class.help<-`, find.package = find.package.help, help = utils::help, help.search = utils::help.search,`?` = utils::`?`)
+
 #' Documentation on RDocumentation or via the normal help system if offline
 #'
 #'\code{help} contacts RDocumentation for help given aliases and packages
@@ -246,8 +248,9 @@ find.package.help <- function(packages, lib, verbose = FALSE){
 #' @export
 #' @importFrom proto proto
 #' @importFrom utils help
-help <- with(proto(environment(help), help = utils::help, browseURL = .browseUrl.help, `class<-` = `.class.help<-`, find.package = find.package.help), help)
-this.help <- with(proto(environment(help), help = utils::help, browseURL = .browseUrl.help, `class<-` = `.class.help<-`, find.package = find.package.help), help)
+help <- function(...){
+    invisible(with(prototype, help)(...))
+}
 #' Search the Help System on RDocumentation or local if offline
 #'
 #'Allows for searching the help system for documentation matching a given character string in the (file) name, alias, title, concept or keyword entries (or any combination thereof),
@@ -304,9 +307,9 @@ this.help <- with(proto(environment(help), help = utils::help, browseURL = .brow
 #' @export
 #' @importFrom proto proto
 #' @importFrom utils help.search
-help.search <- with(proto(environment(help), help.search = utils::help.search, `class<-` = `.class.help<-`), help.search)
-this.help.search <- with(proto(environment(help), help.search = utils::help.search, `class<-` = `.class.help<-`), help.search)
-
+help.search <- function(...){
+    invisible(with(prototype, help.search)(...))
+}
 #' RDocumentation shortcuts
 #'
 #' These functions provide access to RDocumentation. Documentation on a topic with name name (typically, an R object or a data set) can be displayed by either help("name") or ?name.
@@ -350,4 +353,6 @@ this.help.search <- with(proto(environment(help), help.search = utils::help.sear
 #' @keywords documentation
 #' @export
 #' @importFrom proto proto
-`?` <- with(proto(environment(help), `?` = utils::`?`, help = this.help, help.search = this.help.search), `?`)             
+`?` <- function(...){
+    invisible(with(prototype, `?`)(...))
+} 
