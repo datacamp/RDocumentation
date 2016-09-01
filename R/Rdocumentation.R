@@ -6,7 +6,7 @@
 #' rdocs_url()
 #' @export
 rdocs_url <- function(){
-  return ("http://staging.rdocumentation.org/")
+  return ("http://www.rdocumentation.org/")
 }
 
 .getRProfile<-function(){
