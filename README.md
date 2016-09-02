@@ -1,4 +1,4 @@
-![rdocumentation_package_banner](https://cloud.githubusercontent.com/assets/1741726/17591508/cb39a3d6-5fde-11e6-9b49-1434dd417c64.png)
+![rdocumentation_package_banner](https://cloud.githubusercontent.com/assets/1741726/18202790/b757fa44-7112-11e6-99e0-f20e8f3f93ff.png)
 
 
 [![Rdoc](http://staging.rdocumentation.org/badges/version/Rdocumentation)](http://rdocumentation.org/packages/Rdocumentation)
