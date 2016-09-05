@@ -72,11 +72,15 @@ hideViewer <- function(){
 }
 
 #' @export
-.browseUrl.help <- function(url, browser){
+.browseUrl.help <- function(url, browser){ 
+    body = list( package_name = .get_package_from_URL(url), called_function="find_package")
+    return (.view_help(body, url, browser))
+}
+
+.get_package_from_URL <- function(url){
     parsing = substring(url,18, nchar(url)-18)
     parts = strsplit(parsing, "/")
-    body = list( package_name = as.character(parts[[1]][3]), called_function="find_package")
-    return (.view_help(body, url, browser))
+    return (as.character(parts[[1]][3]))
 }
 #' @export
 #' @importFrom httr POST
@@ -133,6 +137,8 @@ hideViewer <- function(){
             return (baseenv()$`class<-`(arg1,arg2))
         }
         else if (body$called_function == "find_package"){
+            #this line will throw an error if the package does not exist before falling back on the original help function
+            base::find.package(.get_package_from_URL(arg1))
             return(utils::browseURL(arg1, arg2))
         }        
     })
@@ -249,7 +255,13 @@ prototype<-proto(environment(help), browseURL = .browseUrl.help, `class<-` = `.c
 #' @importFrom proto proto
 #' @importFrom utils help
 help <- function(...){
-    invisible(with(prototype, help)(...))
+    returned <- with(prototype, help)(...)
+    if(length(returned) == 0){
+        invisible()
+    }
+    else{
+        return (returned)
+    }
 }
 #' Search the Help System on RDocumentation or local if offline
 #'
@@ -308,7 +320,13 @@ help <- function(...){
 #' @importFrom proto proto
 #' @importFrom utils help.search
 help.search <- function(...){
-    invisible(with(prototype, help.search)(...))
+    returned <- with(prototype, help.search)(...)
+    if(length(returned) == 0){
+        invisible()
+    }
+    else{
+        return (returned)
+    }
 }
 #' RDocumentation shortcuts
 #'
@@ -354,5 +372,11 @@ help.search <- function(...){
 #' @export
 #' @importFrom proto proto
 `?` <- function(...){
-    invisible(with(prototype, `?`)(...))
-} 
+    returned <- with(prototype, `?`)(...)
+    if(length(returned) == 0){
+        invisible()
+    }
+    else{
+        return (returned)
+    }
+}
