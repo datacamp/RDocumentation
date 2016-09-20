@@ -5,17 +5,11 @@
 \alias{help}
 \title{Documentation on RDocumentation or via the normal help system if offline}
 \usage{
-help(topic, package = NULL, lib.loc = NULL,
-  verbose = getOption("verbose"),
-  try.all.packages = getOption("help.try.all.packages"),
-  help_type = getOption("help_type"))
+help(...)
 
-"?"(e1, e2)
+"?"(...)
 }
 \arguments{
-\item{topic}{Usually, a name or character string specifying the topic for which help is sought. Alternatively, a function call to ask for documentation on a corresponding S4 method: 
-see the section on S4 method documentation in \code{\link[utils]{?}}. The calls pkg::topic and pkg:::topic are treated specially, and look for help on topic in package pkg.}
-
 \item{package}{a name or character vector giving the packages to look into for documentation, or \code{NULL}.
 By default, all packages whose namespaces are loaded are used. To avoid a name being deparsed use e.g. \code{(pkg_ref)} (see the examples).}
 
@@ -29,6 +23,9 @@ When no local matches are found, RDocumentation will ignore local libraries and 
 
 \item{help_type}{only works if the user is offline, otherwise documentation is viewed on RDocumentation.org in the help-panel
 character string: the type of help required. Possible values are code{"text"}, \code{"html"} and code{"pdf"}. Case is ignored, and partial matching is allowed.}
+
+\item{topic}{Usually, a name or character string specifying the topic for which help is sought. Alternatively, a function call to ask for documentation on a corresponding S4 method: 
+see the section on S4 method documentation in \code{\link[utils]{?}}. The calls pkg::topic and pkg:::topic are treated specially, and look for help on topic in package pkg.}
 
 \item{type}{the special type of documentation to use for this topic; for example, if the type is class, documentation is provided for the class with name topic. 
 See the Section ‘S4 Method Documentation in \code{\link[utils]{?}}’ for the uses of type to get help on formal methods, including methods?function and method?call.
