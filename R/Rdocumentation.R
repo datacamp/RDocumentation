@@ -10,7 +10,7 @@ rdocs_url <- function(){
 }
 
 .getRProfile<-function(){
-    if(!file.exists(file.path(Sys.getenv("HOME"),".Rprofile"))){    
+    if (!file.exists(file.path(Sys.getenv("HOME"),".Rprofile"))) {
         file.create(file.path(Sys.getenv("HOME"),".Rprofile"),quiet=TRUE)
     }
     Rprofile<-file.path(Sys.getenv("HOME"),".Rprofile")
@@ -72,12 +72,18 @@ hideViewer <- function(){
 }
 
 #' @export
-.browseUrl.help <- function(url, browser){
-    parsing = substring(url,18, nchar(url)-18)
-    parts = strsplit(parsing, "/")
-    body = list( package_name = as.character(parts[[1]][3]), called_function="find_package")
+.browseUrl.help <- function(url, browser){ 
+    body = list( package_name = .get_package_from_URL(url), called_function="find_package")
     return (.view_help(body, url, browser))
 }
+
+#gets the packagename from the help url
+.get_package_from_URL <- function(url){
+    parsing = substring(url,18, nchar(url)-18)
+    parts = strsplit(parsing, "/")
+    return (as.character(parts[[1]][3]))
+}
+
 #' @export
 #' @importFrom httr POST
 #' @importFrom httr GET
@@ -91,13 +97,13 @@ hideViewer <- function(){
 #' @importFrom utils browseURL
 #' @importFrom utils read.table
 .view_help <- function(body, arg1, arg2){
-    go_to_url = paste0(rdocs_url(),"rstudio/view?viewer_pane=1")
+    go_to_url = paste0(rdocs_url(), "rstudio/view?viewer_pane=1")
     tempDir <- paste0(find.package("Rdocumentation"), "/doc")
     htmlFile <- file.path(tempDir, "index.html")
-    if (!file.exists(tempDir)){
+    if (!file.exists(tempDir)) {
         dir.create(tempDir)
     }
-    if (exists("package_not_local", envir = prototype)){
+    if ( exists("package_not_local", envir = prototype)) {
         package_not_local = prototype$package_not_local
     }
     else{
@@ -106,9 +112,9 @@ hideViewer <- function(){
     assign("package_not_local", "", envir = prototype)
     tryCatch({
         r <- POST(go_to_url, add_headers(Accept = "text/html"), config = (content_type_json()), body = rjson::toJSON(body), encode = "json", timeout(getOption("Rdocumentation.timeOut")))
-        if(status_code(r) == 200){
-            if(file.exists(paste0(find.package("Rdocumentation"),"/config/creds.txt")) && file.info(paste0(find.package("Rdocumentation"),"/config/creds.txt"))$size > 0){
-                creds <- as.character(read.table(paste0(find.package("Rdocumentation"),"/config/creds.txt"), header = FALSE)$V1)
+        if (status_code(r) == 200) {
+            if (file.exists(paste0(find.package("Rdocumentation"),"/config/creds.txt")) && file.info(paste0(find.package("Rdocumentation"),"/config/creds.txt"))$size > 0) {
+                creds <- as.character(read.table(paste0(find.package("Rdocumentation"), "/config/creds.txt"), header = FALSE)$V1)
             }
             else{
                 creds = ""
@@ -117,7 +123,7 @@ hideViewer <- function(){
             p <- tools::startDynamicHelp(NA)
             browser <- getOption("browser")
             browseURL(paste0("http://127.0.0.1:", p, "/library/Rdocumentation/doc/index.html?viewer_pane=1&Rstudio_port=",
-                as.character(Sys.getenv("RSTUDIO_SESSION_PORT")), "&RS_SHARED_SECRET=", as.character(Sys.getenv("RS_SHARED_SECRET")),"&",creds),browser)
+                as.character(Sys.getenv("RSTUDIO_SESSION_PORT")), "&RS_SHARED_SECRET=", as.character(Sys.getenv("RS_SHARED_SECRET")), "&", creds), browser)
             return (invisible())
         }
         else{
@@ -126,13 +132,15 @@ hideViewer <- function(){
         
     },
     error = function(cond){
-        if (package_not_local != ""){
+        if (package_not_local != "") {
             stop(paste0("package ", package_not_local, " is not in your local library"))
         }
-        if (body$called_function == "help" || body$called_function == "help_search"){
-            return (baseenv()$`class<-`(arg1,arg2))
+        if (body$called_function == "help" || body$called_function == "help_search") {
+            return (baseenv()$`class<-`(arg1, arg2))
         }
-        else if (body$called_function == "find_package"){
+        else if (body$called_function == "find_package") {
+            #this line will throw an error if the package does not exist before falling back on the original help function
+            base::find.package(.get_package_from_URL(arg1))
             return(utils::browseURL(arg1, arg2))
         }        
     })
@@ -148,22 +156,22 @@ hideViewer <- function(){
 #' check_package("utils","3.3.1")
 #' @export
 #' @importFrom utils packageVersion
-check_package <- function(mypkg,version){
-    if (!is.element(mypkg, installed.packages()[ ,1])){
+check_package <- function(mypkg, version){
+    if (!is.element(mypkg, installed.packages()[ ,1])) {
         return (1)
     }
     else{
         i = 1
-        testPackage <- unlist(strsplit(as.character(packageVersion(mypkg)),"[.]"))
-        testVersion <- unlist(strsplit(as.character(version),"[.]"))
-        while  (i <= length(testPackage)){
+        testPackage <- unlist(strsplit(as.character(packageVersion(mypkg)), "[.]"))
+        testVersion <- unlist(strsplit(as.character(version), "[.]"))
+        while  (i <= length(testPackage)) {
             if (length(testVersion) < i){
                 return (-1)
             }
-            if (as.numeric(testVersion[i]) < as.numeric(testPackage[i])){
+            if (as.numeric(testVersion[i]) < as.numeric(testPackage[i])) {
                 return (-1)
             }
-            if (as.numeric(testVersion[i]) > as.numeric(testPackage[i])){
+            if (as.numeric(testVersion[i]) > as.numeric(testPackage[i])) {
                 return (0)
             }
             i = i + 1
@@ -184,11 +192,11 @@ check_package <- function(mypkg,version){
 #' @importFrom utils install.packages
 #' @importFrom utils installed.packages
 install_package <- function(mypkg, type){
-    if (type == 1){
+    if (type == 1) {
         #CRAN
-        install.packages(mypkg,repos="http://cran.rstudio.com/");
+        install.packages(mypkg, repos = "http://cran.rstudio.com/");
     }
-    else if (type == 2){
+    else if (type == 2) {
         #bioconductor
         source("https://bioconductor.org/biocLite.R")
         if (!is.element(mypkg, installed.packages()[ ,1])){
@@ -198,12 +206,12 @@ install_package <- function(mypkg, type){
             biocLite("BiocUpgrade")
         }         
     }
-    else if (type == 3){
+    else if (type == 3) {
         #github
         githubinstall::githubinstall(mypkg)
 
     }
-    else if (type == 4){
+    else if (type == 4) {
         cat("Can not install this package, you need to upgrade your R installation")
     }
     else{
@@ -211,6 +219,7 @@ install_package <- function(mypkg, type){
     }
 } 
 
+# This find.package replacement function makes sure we can save the packagename to search it online, instead of returning an error.
 find.package.help <- function(packages, lib, verbose = FALSE){
     tryCatch({
         return (base::find.package(packages, lib, verbose))
@@ -222,7 +231,8 @@ find.package.help <- function(packages, lib, verbose = FALSE){
     })
 }
 
-prototype<-proto(environment(help), browseURL = .browseUrl.help, `class<-` = `.class.help<-`, find.package = find.package.help, help = utils::help, help.search = utils::help.search,`?` = utils::`?`)
+# Prototype = childEnvironment of the utils-package environment
+prototype <- proto(environment(help), browseURL = .browseUrl.help, `class<-` = `.class.help<-`, find.package = find.package.help, help = utils::help, help.search = utils::help.search,`?` = utils::`?`)
 
 #' Documentation on RDocumentation or via the normal help system if offline
 #'
@@ -249,7 +259,13 @@ prototype<-proto(environment(help), browseURL = .browseUrl.help, `class<-` = `.c
 #' @importFrom proto proto
 #' @importFrom utils help
 help <- function(...){
-    invisible(with(prototype, help)(...))
+    returned <- with(prototype, help)(...)
+    if (length(returned) == 0) {
+        invisible()
+    }
+    else{
+        return (returned)
+    }
 }
 #' Search the Help System on RDocumentation or local if offline
 #'
@@ -308,7 +324,13 @@ help <- function(...){
 #' @importFrom proto proto
 #' @importFrom utils help.search
 help.search <- function(...){
-    invisible(with(prototype, help.search)(...))
+    returned <- with(prototype, help.search)(...)
+    if (length(returned) == 0) {
+        invisible()
+    }
+    else{
+        return (returned)
+    }
 }
 #' RDocumentation shortcuts
 #'
@@ -354,5 +376,11 @@ help.search <- function(...){
 #' @export
 #' @importFrom proto proto
 `?` <- function(...){
-    invisible(with(prototype, `?`)(...))
-} 
+    returned <- with(prototype, `?`)(...)
+    if (length(returned) == 0) {
+        invisible()
+    }
+    else{
+        return (returned)
+    }
+}

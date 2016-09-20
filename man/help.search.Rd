@@ -4,11 +4,7 @@
 \alias{help.search}
 \title{Search the Help System on RDocumentation or local if offline}
 \usage{
-help.search(pattern, fields = c("alias", "concept", "title"), apropos,
-  keyword, whatis, ignore.case = TRUE, package = NULL, lib.loc = NULL,
-  help.db = getOption("help.db"), verbose = getOption("verbose"),
-  rebuild = FALSE, agrep = NULL, use_UTF8 = FALSE,
-  types = getOption("help.search.types"))
+help.search(...)
 }
 \arguments{
 \item{pattern}{a character string to be matched in the specified fields. If this is given, the arguments \code{apropos}, \code{keyword}, and \code{whatis} are ignored.}
