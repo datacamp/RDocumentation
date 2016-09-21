@@ -1,4 +1,6 @@
 .Rproj.user
 .Rhistory
 .RData
-Rdocumentation_package.Rproj
+Rdocumentation.Rproj
+doc/
+doc/*
