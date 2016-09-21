@@ -1,11 +1,11 @@
-Package: Rdocumentation
+Package: RDocumentation
 Type: Package
-Title: Integrate R with Rdocumentation.org
+Title: Integrate R with rdocumentation.org
 Version: 0.5
 Date: 2013-07-26
-Author: Jonathan Cornelissen (for Rdocumentation.org)
+Author: Jonathan Cornelissen <jonathan@datacamp.com>
 Maintainer: Ludovic Vannoorenberghe <ludovic@datacamp.com>
-Description: Enhance the search/help functionality in R with Rdocumentation.org
+Description: The RDocumentation package wraps around the default help functionality in R. Instead of plain documentation files, documentation will now show up as it does on RDocumentation.org, a platform that shows R documentation from CRAN, GitHub and BioConductor, together with informative stats to assess the package quality and possibilities to discuss packages.
 License: GPL (>= 2)
 Imports:
     httr (>= 1.2.1),
