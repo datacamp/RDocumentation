@@ -1,4 +1,4 @@
-The RDocumentation project consists of several projects, all of which are on GitHub.
+The RDocumentation project consists of several repositories, all of which are on GitHub.
 
 **If you want to raise an issue, please do so on the appropriate repository**
 
