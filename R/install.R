@@ -1,3 +1,4 @@
+utils::globalVariables("biocLite")
 #' Install a package from CRAN, BioConductor, or GitHub
 #'
 #' @param mypkg the name of the package you want to install
@@ -20,14 +21,10 @@ install_package <- function(mypkg, type){
   else if (type == 2) {
     # bioconductor
     source("https://bioconductor.org/biocLite.R")
-    if (!requireNamespace("BiocInstaller", quietly = TRUE)) {
-      stop("BiocInstaller couldn't be loaded..")
+    if (!is.element(mypkg, installed.packages()[ ,1])){
+      biocLite(mypkg)
     } else {
-      if (!is.element(mypkg, installed.packages()[ ,1])){
-        BiocInstaller::biocLite(mypkg)
-      } else {
-        BiocInstaller::biocLite("BiocUpgrade")
-      }
+      biocLite("BiocUpgrade")
     }
   } else if (type == 3) {
     githubinstall(mypkg)

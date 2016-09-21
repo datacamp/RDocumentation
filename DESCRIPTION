@@ -15,5 +15,4 @@ Imports:
   githubinstall
 RoxygenNote: 5.0.1
 Suggests: 
-  testthat,
-  BiocInstaller
+  testthat
