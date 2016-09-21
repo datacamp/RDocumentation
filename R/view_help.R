@@ -1,3 +1,9 @@
+#' View the help
+#' 
+#' @param body body of the POST request to RDocumentation
+#' @param arg1 Same as arg1 of utils function
+#' @param arg2 Same as arg2 of utils function
+#' 
 #' @export
 #' @importFrom httr POST
 #' @importFrom httr GET

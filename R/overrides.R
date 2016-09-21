@@ -59,30 +59,17 @@ prototype <- proto(environment(help),
                    help.search = utils::help.search,
                    `?` = utils::`?`)
 
+
 #' Documentation on RDocumentation or via the normal help system if offline
 #'
-#' \code{help} contacts RDocumentation for help given aliases and packages
+#' Wrapper functions around the default help functions from the \code{utils} package. If online, you'll be redirected to RDocumentation. If you're offline, you'll fall back onto your locally installed documentation files.
 #'
-#' @param package a name or character vector giving the packages to look into for documentation, or \code{NULL}.
-#' By default, all packages whose namespaces are loaded are used. To avoid a name being deparsed use e.g. \code{(pkg_ref)} (see the examples).
-#' @param lib.loc a character vector of directory names of R libraries, or \code{NULL}. The default value of \code{NULL} corresponds to all libraries currently known.
-#' If the default is used, the loaded packages are searched before the libraries. This is not used for HTML help (see ‘Details’ from \code{\link[utils]{help}}).
-#' When no local matches are found, RDocumentation will ignore local libraries and search in the online database.
-#' @param verbose logical; if \code{TRUE}, the file name is reported.
-#' @param try.all.packages logical; see Note on \code{\link[utils]{help}}.
-#' @param help_type only works if the user is offline, otherwise documentation is viewed on RDocumentation.org in the help-panel
-#' character string: the type of help required. Possible values are code{"text"}, \code{"html"} and code{"pdf"}. Case is ignored, and partial matching is allowed.
-#' @examples
-#' \dontrun{
-#' help(package=RDocumentation)
-#' help(strsplit,base)
-#' }
-#' 
-#' @seealso \url{http://www.RDocumentation.org} for the online version of the documentation, \code{\link[RDocumentation]{help.search}} for finding help on vague topics or \code{\link[utils]{help}} for 
-#' documentation of the offline help.
+#' @param ... the arguments you'd pass to the default \code{utils} function with the same name
 #'
-#' @details for slow internet connections, a timeout can be set for getting the page of RDocumentation via options("RDocumentation.timeOut" = \code{nb_of_seconds}) the default timeout is 3 seconds
-#'
+#' @details for slow internet connections, a timeout can be set for getting the page of RDocumentation via \code{options("RDocumentation.timeOut" = nb_of_seconds)} the default timeout is 3 seconds.
+#' @name documentation
+
+#' @rdname documentation
 #' @export
 #' @importFrom proto proto
 #' @importFrom utils help
@@ -95,61 +82,7 @@ help <- function(...){
     }
 }
 
-#' Search the Help System on RDocumentation or local if offline
-#'
-#'Allows for searching the help system for documentation matching a given character string in the (file) name, alias, title, concept or keyword entries (or any combination thereof),
-#'using either fuzzy matching(\code{\link[base]{agrep}}) or regular expression (\code{\link[base]{regex}}) matching.
-#'Names and titles of the matched help entries are displayed nicely formatted. Vignette names, titles and keywords and demo names and titles may also be searched.
-#'
-#' @param pattern a character string to be matched in the specified fields. If this is given, the arguments \code{apropos}, \code{keyword}, and \code{whatis} are ignored.
-#' @param fields a character vector specifying the fields of the help database to be searched. The entries must be abbreviations of \code{"name"}, \code{"title"}, \code{"alias"}, \code{"concept"}, and \code{"keyword"},
-#' corresponding to the help page's (file) name, its title, the topics and concepts it provides documentation for, and the keywords it can be classified to.
-#' See below for details and how vignettes and demos are searched.
-#' @param apropos a character string to be matched in the help page topics and title.
-#' @param keyword a character string to be matched in the help page ‘keywords’. ‘Keywords’ are really categories: the standard categories are listed in file ‘R.home("doc")/KEYWORDS’
-#' (see also the example) and some package writers have defined their own. If \code{keyword} is specified, \code{agrep} defaults to \code{FALSE}.
-#' @param whatis a character string to be matched in the help page topics.
-#' @param ignore.case a logical. If \code{TRUE}, case is ignored during matching; if \code{FALSE}, pattern matching is case sensitive. If no local matches are found, the online search is used, which is always non case-sensitive.
-#' @param package a character vector with the names of packages to search through, or \code{NULL} in which case all available packages in the library trees specified by \code{lib.loc} are searched.
-#' if no matches are found, the RDocumentation.org database is searched.
-#' @param lib.loc a character vector describing the location of R library trees to search through, or \code{NULL}. The default value of \code{NULL} corresponds to all libraries currently known. If no matches are found in the given library,
-#' the online search of RDocumentation is used.
-#' @param help.db a character string giving the file path to a previously built and saved help database, or \code{NULL}.
-#' @param verbose logical; if \code{TRUE}, the search process is traced. Integer values are also accepted, with \code{TRUE} being equivalent to \code{2},
-#' ' and \code{1} being less verbose. On Windows a progress bar is shown during rebuilding, and on Unix a heartbeat is shown for \code{verbose = 1} and a package-by-package list for \code{verbose >= 2}.
-#' @param rebuild a logical indicating whether the help database should be rebuilt. This will be done automatically if \code{lib.loc} or the search path is changed, 
-#' or if \code{package} is used and a value is not found.
-#' @param agrep if \code{NULL} (the default unless \code{keyword} is used) and the character string to be matched consists of alphanumeric characters,
-#' whitespace or a dash only, approximate (fuzzy) matching via \code{\link[base]{agrep}} is used unless the string has fewer than 5 characters; 
-#' otherwise, it is taken to contain a regular expression (\code{\link[base]{regex}}) to be matched via \code{\link[base]{grep}}. If \code{FALSE},
-#' approximate matching is not used. Otherwise, one can give a numeric or a list specifying the maximal distance for the approximate match, see argument \code{max.distance} in the documentation for agrep.
-#' @param use_UTF8 logical: should results be given in UTF-8 encoding? Also changes the meaning of regexps in \code{agrep} to be Perl regexps. This does not have effect when the online database is used.
-#' @param types a character vector listing the types of documentation to search. The entries must be abbreviations of \code{"vignette"}, \code{"help"} or \code{"demo"}. Results will be presented in the order specified. 
-#' @examples
-#' \dontrun{
-#' help.search("linear models")    # In case you forgot how to fit linear
-#'                                 # models
-#' help.search("non-existent topic")
-#' 
-#' ??utils::help  # All the topics matching "help" in the utils package
-#'
-#' help.search("print")            # All help pages with topics or title
-#'                                 # matching 'print'
-#' help.search(apropos = "print")  # The same
-#'
-#' help.search(keyword = "hplot",fields=c("alias"))  # All help pages documenting high-level
-#'                                                   # plots.
-#' file.show(file.path(R.home("doc"), "KEYWORDS"))  # show all keywords
-#' 
-#' ## Help pages with documented topics starting with 'try'.
-#' help.search("\\btry", fields = "alias")
-#' }
-#' 
-#' @seealso \url{http://www.RDocumentation.org} for the online version of the documentation, \code{\link[RDocumentation]{help}} for finding help on non-vague topics or \code{\link[utils]{help.search}} for 
-#' documentation of the offline help.
-#'
-#' @details for slow internet connections, a timeout can be set for getting the page of RDocumentation via options("RDocumentation.timeOut" = \code{nb_of_seconds}) the default timeout is 3 seconds
-#'
+#' @rdname documentation
 #' @export
 #' @importFrom proto proto
 #' @importFrom utils help.search
@@ -163,29 +96,7 @@ help.search <- function(...){
     }
 }
 
-#' RDocumentation shortcuts
-#'
-#' These functions provide access to RDocumentation. Documentation on a topic with name name (typically, an R object or a data set) can be displayed by either help("name") or ?name.
-#'
-#' @param topic Usually, a name or character string specifying the topic for which help is sought. Alternatively, a function call to ask for documentation on a corresponding S4 method: 
-#' see the section on S4 method documentation in \code{\link[utils]{?}}. The calls pkg::topic and pkg:::topic are treated specially, and look for help on topic in package pkg.
-#' @param type the special type of documentation to use for this topic; for example, if the type is class, documentation is provided for the class with name topic. 
-#' See the Section ‘S4 Method Documentation in \code{\link[utils]{?}}’ for the uses of type to get help on formal methods, including methods?function and method?call.
-#'
-#' This is a shortcut to help and uses its default type of help.
-#' Some topics need to be quoted (by backticks) or given as a character string. There include those which cannot syntactically appear on their own such as unary and binary operators, function and control-flow reserved words (including if, else for, in, repeat, while, break and next. The other reserved words can be used as if they were names, for example TRUE, NA and Inf.
-#' @examples
-#' \dontrun{
-#' ?lapply
-#' 
-#' # for specials, quotes/backticks are needed
-#' ?"for"                  
-#' ?`+`
-#' 
-#' # information about data set "women"
-#' ?women
-#' }
-#' 
+#' @rdname documentation
 #' @export
 #' @importFrom proto proto
 `?` <- function(...){

@@ -1,11 +1,11 @@
-#' Installs the given package
+#' Install a package from CRAN, BioConductor, or GitHub
 #'
 #' @param mypkg the name of the package you want to install
-#' @param type the type of the package, type 1 means the package comes from CRAN, type 2 packages are from bioconductor, type 3 packages are from github and type 4 packages are by default part of R.
+#' @param type the type of the package, type 1 means the package comes from CRAN, type 2 packages are from BioConductor, type 3 packages are from GitHub and type 4 packages are by default part of R.
 #' @examples
 #' \dontrun{
-#' install_package("dplyr",1)
-#' install_package("RDocumentation",3)
+#' install_package("dplyr", 1)
+#' install_package("RDocumentation", 3)
 #' }
 #' 
 #' @export
@@ -20,24 +20,20 @@ install_package <- function(mypkg, type){
   else if (type == 2) {
     # bioconductor
     source("https://bioconductor.org/biocLite.R")
-    if (!is.element(mypkg, installed.packages()[ ,1])){
-      if (!require("BiocInstaller")) {
-        stop("Can't load BiocInstaller; make sure to install the package.")
+    if (!requireNamespace("BiocInstaller", quietly = TRUE)) {
+      stop("BiocInstaller couldn't be loaded..")
+    } else {
+      if (!is.element(mypkg, installed.packages()[ ,1])){
+        BiocInstaller::biocLite(mypkg)
       } else {
-        BiocInstaller::biocLite(mypkg)  
+        BiocInstaller::biocLite("BiocUpgrade")
       }
     }
-    else {
-      BiocInstaller::biocLite("BiocUpgrade")
-    }         
-  }
-  else if (type == 3) {
+  } else if (type == 3) {
     githubinstall(mypkg)
-  }
-  else if (type == 4) {
+  } else if (type == 4) {
     cat("Can not install this package, you need to upgrade your R installation")
-  }
-  else{
+  } else{
     cat("Something went wrong, could not install this package")
   }
 } 

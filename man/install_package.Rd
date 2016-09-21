@@ -2,22 +2,22 @@
 % Please edit documentation in R/install.R
 \name{install_package}
 \alias{install_package}
-\title{Installs the given package}
+\title{Install a package from CRAN, BioConductor, or GitHub}
 \usage{
 install_package(mypkg, type)
 }
 \arguments{
 \item{mypkg}{the name of the package you want to install}
 
-\item{type}{the type of the package, type 1 means the package comes from CRAN, type 2 packages are from bioconductor, type 3 packages are from github and type 4 packages are by default part of R.}
+\item{type}{the type of the package, type 1 means the package comes from CRAN, type 2 packages are from BioConductor, type 3 packages are from GitHub and type 4 packages are by default part of R.}
 }
 \description{
-Installs the given package
+Install a package from CRAN, BioConductor, or GitHub
 }
 \examples{
 \dontrun{
-install_package("dplyr",1)
-install_package("RDocumentation",3)
+install_package("dplyr", 1)
+install_package("RDocumentation", 3)
 }
 
 }
