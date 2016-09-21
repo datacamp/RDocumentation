@@ -45,14 +45,18 @@ hideViewer <- function(){
   help(package = "RDocumentation")
 }
 
-# gets the packagename from the help url
+#' Get package URL
+#' 
+#' @param url The url to get the package for
+#' 
+#' @export
 get_package_from_URL <- function(url){
   parsing <- substring(url, 18, nchar(url) - 18)
   parts <- strsplit(parsing, "/")
   return (as.character(parts[[1]][3]))
 }
 
-getRProfile<-function(){
+getRProfile <- function(){
   if (!file.exists(file.path(Sys.getenv("HOME"),".Rprofile"))) {
     file.create(file.path(Sys.getenv("HOME"),".Rprofile"),quiet=TRUE)
   }

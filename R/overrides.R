@@ -1,106 +1,41 @@
-browseUrl.help <- function(url, browser){ 
-  body = list( package_name = get_package_from_URL(url), called_function="find_package")
+browseUrl.help <- function(url, browser) {
+  body = list(package_name = get_package_from_URL(url), called_function = "find_package")
   return (view_help(body, url, browser))
 }
 
-
 # Overwrites the class<- function, converts help answers to json and sends them to RDocumentation
-`.class.help<-` <- function(package, value){
-    if (value == "help_files_with_topic"){
-        if (!exists("package_not_local", envir = environment(help)) || environment(help)$package_not_local == ""){
-            packages<-lapply(package,function(path){
-            temp = strsplit(path, "/")[[1]]
-            return (temp[length(temp)-2])
-            })
-            topic_names <- lapply(package, function(path){
-                temp = strsplit(path, "/")[[1]]
-                return (tail(temp, n = 1))
-            })
-        }
-        else{
-            packages <- environment(help)$package_not_local
-            topic_names <- ""
-        }     
-        body = list(packages = as.character(paste(packages,sep = "",collapse = ",")), topic_names = as.character(paste(topic_names, sep = "", collapse = ",")),
-                           call = as.character(paste(attributes(package)$call, sep = "", collapse = ",")), topic = as.character(attributes(package)$topic),
-                           tried_all_packages = as.character(attributes(package)$tried_all_packages), help_type = as.character(attributes(package)$type), called_function="help")
-                           go_to_url = paste0(RDocumentation:::rdocs_url, "rstudio/normal/help?viewer_pane=1")
+`.class.help<-` <- function(package, value) {
+  if (value == "help_files_with_topic"){
+    if (!exists("package_not_local", envir = environment(help)) || environment(help)$package_not_local == ""){
+      packages <- lapply(package,function(path){
+        temp = strsplit(path, "/")[[1]]
+        return (temp[length(temp)-2])
+      })
+      topic_names <- lapply(package, function(path){
+        temp = strsplit(path, "/")[[1]]
+        return (tail(temp, n = 1))
+      })
     }
     else{
-        hsearch_db_fields <- c("alias", "concept", "keyword", "name", "title")
-        elas_search_db_fields <- c("aliases","concept","keywords","name","title")
-        fields = lapply(package$fields, function(e){
-            return (elas_search_db_fields[which(hsearch_db_fields == e)])
-        })
-        body = list(query = as.character(package[1]), fields = as.character(paste(fields, sep = "", collapse = ",")),
-                           type = as.character(package[3]), agrep = as.character(package[4]), ignore_case = as.character(package[5]),
-                           types = as.character(paste(package$types, sep = "", collapse = ",")), package = as.character(package[7]),
-                           matching_titles = as.character(gsub(" ", "", toString(unique(package$matches$Topic)), fixed = TRUE)),
-                           matching_packages = as.character(gsub(" ", "", toString(unique(package$matches$Package)), fixed = TRUE)), called_function="help_search")
-    }
-    return (view_help(body, package, value))
-}
-
-
-#' @export
-#' @importFrom httr POST
-#' @importFrom httr GET
-#' @importFrom httr status_code
-#' @importFrom httr content
-#' @importFrom httr content_type_json
-#' @importFrom httr timeout
-#' @importFrom httr cookies
-#' @importFrom httr add_headers
-#' @importFrom rjson toJSON
-#' @importFrom utils browseURL
-#' @importFrom utils read.table
-view_help <- function(body, arg1, arg2){
-    go_to_url = paste0(rdocs_url, "rstudio/view?viewer_pane=1")
-    temp_dir <- system.file(package = "RDocumentation")
-    html_file <- file.path(temp_dir, "index.html")
-
-    if ( exists("package_not_local", envir = prototype)) {
-        package_not_local = prototype$package_not_local
-    }
-    else{
-        package_not_local = ""
-    }
-    assign("package_not_local", "", envir = prototype)
-    tryCatch({
-        r <- POST(go_to_url, add_headers(Accept = "text/html"), config = (content_type_json()), body = rjson::toJSON(body), encode = "json", timeout(getOption("RDocumentation.timeOut")))
-        if (status_code(r) == 200) {
-            if (file.exists(paste0(find.package("RDocumentation"),"/config/creds.txt")) && file.info(paste0(find.package("RDocumentation"),"/config/creds.txt"))$size > 0) {
-                creds <- as.character(read.table(paste0(find.package("RDocumentation"), "/config/creds.txt"), header = FALSE)$V1)
-            }
-            else{
-                creds = ""
-            }
-            writeBin(content(r, "raw"), html_file)
-            p <- tools::startDynamicHelp(NA)
-            browser <- getOption("browser")
-            browseURL(paste0("http://127.0.0.1:", p, html_file, "?viewer_pane=1&Rstudio_port=",
-                as.character(Sys.getenv("RSTUDIO_SESSION_PORT")), "&RS_SHARED_SECRET=", as.character(Sys.getenv("RS_SHARED_SECRET")), "&", creds), browser)
-            return (invisible())
-        }
-        else{
-            stop("bad return status")
-        }
-        
-    },
-    error = function(cond){
-        if (package_not_local != "") {
-            stop(paste0("package ", package_not_local, " is not in your local library"))
-        }
-        if (body$called_function == "help" || body$called_function == "help_search") {
-            return (baseenv()$`class<-`(arg1, arg2))
-        }
-        else if (body$called_function == "find_package") {
-            #this line will throw an error if the package does not exist before falling back on the original help function
-            base::find.package(get_package_from_URL(arg1))
-            return(utils::browseURL(arg1, arg2))
-        }        
+      packages <- environment(help)$package_not_local
+      topic_names <- ""
+    }     
+    body <- list(packages = as.character(paste(packages,sep = "",collapse = ",")), topic_names = as.character(paste(topic_names, sep = "", collapse = ",")),
+                call = as.character(paste(attributes(package)$call, sep = "", collapse = ",")), topic = as.character(attributes(package)$topic),
+                tried_all_packages = as.character(attributes(package)$tried_all_packages), help_type = as.character(attributes(package)$type), called_function="help")
+  } else {
+    hsearch_db_fields <- c("alias", "concept", "keyword", "name", "title")
+    elas_search_db_fields <- c("aliases","concept","keywords","name","title")
+    fields = lapply(package$fields, function(e){
+      return (elas_search_db_fields[which(hsearch_db_fields == e)])
     })
-    
+    body <- list(query = as.character(package[1]), fields = as.character(paste(fields, sep = "", collapse = ",")),
+                 type = as.character(package[3]), agrep = as.character(package[4]), ignore_case = as.character(package[5]),
+                 types = as.character(paste(package$types, sep = "", collapse = ",")), package = as.character(package[7]),
+                 matching_titles = as.character(gsub(" ", "", toString(unique(package$matches$Topic)), fixed = TRUE)),
+                 matching_packages = as.character(gsub(" ", "", toString(unique(package$matches$Package)), fixed = TRUE)), called_function="help_search")
+  }
+  return (view_help(body, package, value))
 }
 
 # This find.package replacement function makes sure we can save the packagename to search it online, instead of returning an error.
@@ -254,13 +189,12 @@ help.search <- function(...){
 #' @export
 #' @importFrom proto proto
 `?` <- function(...){
-    returned <- with(prototype, `?`)(...)
-    if (length(returned) == 0) {
-        invisible()
-    }
-    else{
-        return (returned)
-    }
+  returned <- with(prototype, `?`)(...)
+  if (length(returned) == 0) {
+    invisible()
+  } else{
+    return(returned)
+  }
 }
 
 

@@ -1,8 +1,8 @@
 .onLoad <- function(libName,pkgName){
-    options(Rdocumentation.timeOut = 3)
+    options(RDocumentation.timeOut = 3)
     Rprofile <- getRProfile()
     names <- scan(Rprofile, what=character(),quiet=TRUE)
     if (!any(grepl("Rdocumentation", names))) {
-        .view_help(list(called_function="make_default"),"","")
+        view_help(list(called_function="make_default"),"","")
     }
 }
