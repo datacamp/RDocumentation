@@ -5,4 +5,4 @@ The RDocumentation project consists of several projects, all of which are on Git
 - [datacamp/RDocumentation-app](https://github.com/datacamp/RDocumentation-app): NodeJS web application that serves [rdocumentation.org](https://rdocumentation.org)
 - [datacamp/RDocumentation](https://github.com/datacamp/RDocumentation): R package to integrate RDocumentation in your day-to-day workflow in R.
 - [datacamp/RDocumentation-labmda-worker](https://github.com/datacamp/RDocumentation-labmda-worker): AWS Lambda pipeline to parse package documentation.
-- [datacamp/RDocumentation-elasticsearch](https://github.com/datacamp/RDocumentation-elasticsearch): Elastic Search configuration.
+- [datacamp/RDocumentation-elasticsearch](https://github.com/datacamp/RDocumentation-elasticsearch): Configuration and feeders of the elasticsearch server serving rdocumentation.org.
