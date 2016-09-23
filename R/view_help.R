@@ -4,6 +4,10 @@
 #' @param arg1 Same as arg1 of utils function
 #' @param arg2 Same as arg2 of utils function
 #' 
+#' @details Leverage https://www.rdocumentation.org/packages/tools/versions/3.3.1/topics/startDynamicHelp to render html page into the help pane
+#' As the page are rendered by the internal RStudio Server, it tricks RStudio into thinking that page is from the same origin as the other elements
+#' in RStudio IDE, which allows us to communicate from the javascript to the /rpc/... endpoint 
+#' 
 #' @export
 #' @importFrom httr POST
 #' @importFrom httr GET

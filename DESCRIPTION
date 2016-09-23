@@ -1,7 +1,7 @@
 Package: RDocumentation
 Type: Package
 Title: Integrate R with rdocumentation.org
-Version: 0.5
+Version: 0.6
 Date: 2013-07-26
 Author: Jonathan Cornelissen <jonathan@datacamp.com>
 Maintainer: Ludovic Vannoorenberghe <ludovic@datacamp.com>
