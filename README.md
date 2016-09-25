@@ -10,11 +10,7 @@ Enhance the search/help functionality in R with [RDocumentation.org](http://www.
 To install the package, use `devtools`:
 
 ```R
-<<<<<<< HEAD
 devtools::install_github("datacamp/RDocumentation")
-=======
-devtools::install_github("datacamp/RDocumentation-package")
->>>>>>> cleanup
 library(RDocumentation)
 ```
 
