@@ -1,6 +1,6 @@
 ![rdocumentation_package_banner](https://cloud.githubusercontent.com/assets/1741726/18202790/b757fa44-7112-11e6-99e0-f20e8f3f93ff.png)
 
-[![Travis-CI Build Status](https://travis-ci.org/datacamp/Rdocumentation.svg?branch=master)](https://travis-ci.org/datacamp/Rdocumentation)
+[![Travis-CI Build Status](https://travis-ci.org/datacamp/RDocumentation.svg?branch=master)](https://travis-ci.org/datacamp/RDocumentation)
 [![Rdoc](http://staging.rdocumentation.org/badges/version/Rdocumentation)](http://rdocumentation.org/packages/Rdocumentation)
 
 Enhance the search/help functionality in R with [RDocumentation.org](http://www.rdocumentation.org), and discover what R packages are most popular.
