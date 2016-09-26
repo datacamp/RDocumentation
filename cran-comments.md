@@ -6,7 +6,7 @@
 
 ## R CMD check results
 
-TODO: add
+1 NOTE, about possibly misspelled words in DESCRIPTION: double checked, and no typos, just exotic words!
 
 ## Downstream dependencies
 
