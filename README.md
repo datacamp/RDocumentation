@@ -2,6 +2,7 @@
 
 [![Travis-CI Build Status](https://travis-ci.org/datacamp/RDocumentation.svg?branch=master)](https://travis-ci.org/datacamp/RDocumentation)
 [![codecov](https://codecov.io/gh/datacamp/RDocumentation/branch/master/graph/badge.svg)](https://codecov.io/gh/datacamp/RDocumentation)
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/RDocumentation)](https://cran.r-project.org/package=RDocumentation)
 [![Rdoc](http://staging.rdocumentation.org/badges/version/RDocumentation)](http://rdocumentation.org/packages/RDocumentation)
 
 Enhance the search/help functionality in R with [RDocumentation.org](http://www.rdocumentation.org), and discover what R packages are most popular.
