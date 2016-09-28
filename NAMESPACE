@@ -2,6 +2,10 @@
 
 export("?")
 export(check_package)
+export(disable_autoload)
+export(disable_override)
+export(enable_autoload)
+export(enable_override)
 export(get_package_from_URL)
 export(help)
 export(help.search)

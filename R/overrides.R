@@ -5,18 +5,18 @@ browseUrl.help <- function(url, browser) {
 
 # Overwrites the class<- function, converts help answers to json and sends them to RDocumentation
 `.class.help<-` <- function(package, value) {
-  if (value == "help_files_with_topic"){
-    if (!exists("package_not_local", envir = environment(help)) || environment(help)$package_not_local == ""){
-      packages <- lapply(package,function(path){
+  if (value == "help_files_with_topic") {
+    if (!exists("package_not_local", envir = environment(help)) || environment(help)$package_not_local == "") {
+      packages <- lapply(package,function(path) {
         temp = strsplit(path, "/")[[1]]
         return (temp[length(temp)-2])
       })
-      topic_names <- lapply(package, function(path){
+      topic_names <- lapply(package, function(path) {
         temp = strsplit(path, "/")[[1]]
         return (tail(temp, n = 1))
       })
     }
-    else{
+    else {
       packages <- environment(help)$package_not_local
       topic_names <- ""
     }     
@@ -74,38 +74,41 @@ prototype <- proto(environment(help),
 #' @importFrom proto proto
 #' @importFrom utils help
 help <- function(...){
-    returned <- with(prototype, help)(...)
-    if (length(returned) == 0) {
-        invisible()
-    } else{
-        return(returned)
-    }
+  if (is_override()) {
+    careful_return(with(prototype, help)(...))
+  } else {
+    utils::help(...)
+  }
 }
 
 #' @rdname documentation
 #' @export
 #' @importFrom proto proto
 #' @importFrom utils help.search
-help.search <- function(...){
-    returned <- with(prototype, help.search)(...)
-    if (length(returned) == 0) {
-        invisible()
-    }
-    else{
-        return (returned)
-    }
+help.search <- function(...) {
+  if (is_override()) {
+    careful_return(with(prototype, help.search)(...))
+  } else {
+    utils::help.search(...)
+  }
 }
 
 #' @rdname documentation
 #' @export
 #' @importFrom proto proto
 `?` <- function(...){
-  returned <- with(prototype, `?`)(...)
-  if (length(returned) == 0) {
-    invisible()
-  } else{
-    return(returned)
+  if (is_override()) {
+    careful_return(with(prototype, `?`)(...))
+  } else {
+    utils::`?`(...)
   }
 }
 
+careful_return <- function(x) {
+  if (length(x) == 0) {
+    return(invisible())
+  } else{
+    return(x)
+  }
+}
 

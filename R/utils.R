@@ -27,15 +27,6 @@ check_package <- function(pkg, version) {
   }
 }
 
-#' Makes the RDocumentation package the default help-package.
-#'
-#' @export
-makeDefault <- function(){
-  Rprofile <- getRProfile()
-  write("options(defaultPackages = c(getOption('defaultPackages'), 'RDocumentation'))", file = Rprofile, append = TRUE)
-  hideViewer()
-  return (invisible())
-}
 
 #' Redirects the viewer to the RDocumentation help page.
 #'
@@ -56,10 +47,10 @@ get_package_from_URL <- function(url){
   return (as.character(parts[[1]][3]))
 }
 
-getRProfile <- function(){
+get_r_profile <- function(){
   if (!file.exists(file.path(Sys.getenv("HOME"),".Rprofile"))) {
     file.create(file.path(Sys.getenv("HOME"),".Rprofile"),quiet=TRUE)
   }
-  Rprofile<-file.path(Sys.getenv("HOME"),".Rprofile")
+  Rprofile <- file.path(Sys.getenv("HOME"),".Rprofile")
   return (Rprofile)
 }

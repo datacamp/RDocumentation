@@ -47,8 +47,7 @@ view_help <- function(body, arg1, arg2){
                     as.character(Sys.getenv("RSTUDIO_SESSION_PORT")), "&RS_SHARED_SECRET=", as.character(Sys.getenv("RS_SHARED_SECRET")), "&", creds)
       browseURL(url, browser)
       return(invisible())
-    }
-    else{
+    } else{
       stop("bad return status")
     }
   },
@@ -57,7 +56,7 @@ view_help <- function(body, arg1, arg2){
       stop(paste0("package ", package_not_local, " is not in your local library"))
     }
     if (body$called_function == "help" || body$called_function == "help_search") {
-      return (baseenv()$`class<-`(arg1, arg2))
+      return(baseenv()$`class<-`(arg1, arg2))
     } else if (body$called_function == "find_package") {
       #this line will throw an error if the package does not exist before falling back on the original help function
       base::find.package(get_package_from_URL(arg1))
