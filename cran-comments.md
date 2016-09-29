@@ -6,8 +6,7 @@
 
 ## R CMD check results
 
-On windows builds, there was 1 NOTE, about possibly misspelled words in DESCRIPTION: double checked, and no typos!
-Change wrt last submission: Put 'Rdocumentation.org' in single quote, fixed typo in BioConductor and fixed Description
+0 errors | 0 warnings | 0 notes
 
 ## Downstream dependencies
 
