@@ -1,13 +1,13 @@
 context("help")
 
 test_that("help_normal",{
+  expect_equal(help(mean), NULL)
 	expect_equal(help(mean,base), NULL)
-	expect_equal(help(package=utils), NULL)
 })
 
 test_that("help_non_installed_package",{
 	# RDocumentation will not find this package
-	expect_error(help(package="non_installed"))
+	expect_error(help(package = "non_installed"))
 })
 
 test_that("help_topic_non_installed_package",{
