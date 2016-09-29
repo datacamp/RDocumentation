@@ -94,7 +94,7 @@ ask_autoload <- function() {
     message(paste("Congratulations!",
                   "R will now use RDocumentation to display your help files.",
                   "If you're offline, R will just display your local documentation.",
-                  "To avoid automatically loading the RDocumentation package, use disable_autoloads().", 
+                  "To avoid automatically loading the RDocumentation package, use disable_autoload().", 
                   "If you don't want the ? and help functionality to show RDocumentation pages, use disable_override().",
                   sep = "\n"))
   } else {

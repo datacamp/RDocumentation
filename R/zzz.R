@@ -3,6 +3,9 @@
   options(help_type = "html")
   if (interactive()) {
     ask_questions()
+  } else {
+    # just do the override
+    enable_override()
   }
 }
 

@@ -16,4 +16,5 @@ test_that("overrides", {
   expect_true(override_line %in% readLines(get_r_profile()))
   disable_override()
   expect_false(override_line %in% readLines(get_r_profile()))
+  enable_override()
 })
