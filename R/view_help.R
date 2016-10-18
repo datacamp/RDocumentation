@@ -69,6 +69,7 @@ view_help <- function(body, arg1, arg2){
   })
 }
 
+#' @importFrom httr parse_url
 build_local_url <- function(p) {
   url <- sprintf("http://127.0.0.1:%s/library/RDocumentation/doc/index.html", p)
   append <- "?viewer_pane=1"
@@ -80,8 +81,11 @@ build_local_url <- function(p) {
   if (nchar(shared_secret) > 0) {
     append <- c(append, paste0("RS_SHARED_SECRET=", shared_secret))
   }
-  if (length(append) > 0) {
-    url <- paste0(url, paste0(append, collapse = "&"))
+  if (file.exists(cred_path) && file.info(cred_path)$size > 0) {
+    creds <- paste0(readLines(cred_path), collapse = "")
+    comps <- parse_url(paste0("?", creds))$query[c("username", "password")]
+    append <- c(append, paste0(names(comps), "=", unlist(comps, use.names = FALSE)))
   }
+  url <- paste0(url, paste0(append, collapse = "&"))
   return(url)
 }
