@@ -72,7 +72,7 @@ view_help <- function(body, arg1, arg2){
 
 build_local_url <- function(p, creds_path) {
   url <- sprintf("http://127.0.0.1:%s/library/RDocumentation/doc/index.html", p)
-  append <- character(0)
+  append <- "?viewer_pane=1"
   rstudio_port <- Sys.getenv("RSTUDIO_SESSION_PORT")
   if (nchar(rstudio_port) > 0) {
     append <- c(append, paste0("Rstudio_port=", rstudio_port))
@@ -82,7 +82,7 @@ build_local_url <- function(p, creds_path) {
     append <- c(append, paste0("RS_SHARED_SECRET=", shared_secret))
   }
   if (length(append) > 0) {
-    url <- paste0(url, "?", paste0(append, collapse = "&"))
+    url <- paste0(url, paste0(append, collapse = "&"))
   }
   return(url)
   # if (file.exists(cred_path) && file.info(cred_path)$size > 0) {
