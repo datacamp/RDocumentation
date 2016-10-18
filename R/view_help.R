@@ -36,6 +36,7 @@ view_help <- function(body, arg1, arg2){
     go_to_url <- paste0(rdocs_url, "rstudio/view?viewer_pane=1")
     resp <- POST(go_to_url,
                  add_headers(Accept = "text/html"),
+                 user_agent("rstudio"),
                  config = (content_type_json()),
                  body = rjson::toJSON(body),
                  encode = "json",
