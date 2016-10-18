@@ -59,7 +59,7 @@ is_autoload <- function() {
 }
 
 is_override <- function() {
-  isTRUE(Sys.getenv("RSTUDIO") == "1") && getOption("RDocs.override", default = FALSE)
+  getOption("RDocs.override", default = FALSE)
 }
 
 is_in_profile <- function(the_line) {
