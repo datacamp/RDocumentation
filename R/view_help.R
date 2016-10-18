@@ -21,10 +21,9 @@
 #' @importFrom utils browseURL
 #' @importFrom utils read.table
 view_help <- function(body, arg1, arg2){
+  
   # create doc directory if doesn't exist yet
-  if(!dir.exists(rdocs_dir)) {
-    dir.create(rdocs_dir)
-  }
+  dir.create(rdocs_dir, showWarnings = FALSE)
   
   if ( exists("package_not_local", envir = prototype)) {
     package_not_local <- prototype$package_not_local
@@ -46,7 +45,7 @@ view_help <- function(body, arg1, arg2){
       writeBin(content(resp, "raw"), html_file)
       browser <- getOption("browser")
       p <- tools::startDynamicHelp(NA)
-      url <- build_local_url(p, creds_path)
+      url <- build_local_url(p)
       browseURL(url, browser)
       return(invisible())
     } else{
@@ -70,7 +69,7 @@ view_help <- function(body, arg1, arg2){
   })
 }
 
-build_local_url <- function(p, creds_path) {
+build_local_url <- function(p) {
   url <- sprintf("http://127.0.0.1:%s/library/RDocumentation/doc/index.html", p)
   append <- "?viewer_pane=1"
   rstudio_port <- Sys.getenv("RSTUDIO_SESSION_PORT")
@@ -85,8 +84,4 @@ build_local_url <- function(p, creds_path) {
     url <- paste0(url, paste0(append, collapse = "&"))
   }
   return(url)
-  # if (file.exists(cred_path) && file.info(cred_path)$size > 0) {
-  #   creds <- as.character(read.table(cred_path, header = FALSE)$V1)
-  #   append <- c(append, "")
-  # }
 }

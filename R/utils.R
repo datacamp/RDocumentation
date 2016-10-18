@@ -1,6 +1,5 @@
 rdocs_url <- "https://www.RDocumentation.org/"
 rdocs_dir <- file.path(system.file(package = "RDocumentation"), "doc")
-creds_path <- file.path(system.file(package = "RDocumentation"), "config", "creds.txt")
 html_file <- file.path(rdocs_dir, "index.html")
 
 #' Check if a package is installed for the user.
@@ -52,8 +51,8 @@ get_package_from_URL <- function(url){
 
 get_r_profile <- function(){
   if (!file.exists(file.path(Sys.getenv("HOME"),".Rprofile"))) {
-    file.create(file.path(Sys.getenv("HOME"),".Rprofile"),quiet=TRUE)
+    file.create(file.path(Sys.getenv("HOME"), ".Rprofile"), quiet=TRUE)
   }
-  Rprofile <- file.path(Sys.getenv("HOME"),".Rprofile")
+  Rprofile <- file.path(Sys.getenv("HOME"), ".Rprofile")
   return (Rprofile)
 }
