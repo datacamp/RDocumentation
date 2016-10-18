@@ -13,6 +13,7 @@
 #' @importFrom httr GET
 #' @importFrom httr status_code
 #' @importFrom httr content
+#' @importFrom httr user_agent
 #' @importFrom httr content_type_json
 #' @importFrom httr timeout
 #' @importFrom httr cookies
