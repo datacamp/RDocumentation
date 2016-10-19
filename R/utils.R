@@ -1,4 +1,4 @@
-rdocs_url <- "http://www.rdocumentation.org/"
+rdocs_url <- "http://staging.rdocumentation.org/"
 rdocs_dir <- file.path(system.file(package = "RDocumentation"), "doc")
 html_file <- file.path(rdocs_dir, "index.html")
 cred_path <- file.path(system.file(package = "RDocumentation"), "config", "creds.txt")
