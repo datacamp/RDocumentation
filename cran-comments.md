@@ -9,8 +9,7 @@
 0 errors | 0 warnings | 0 notes
 
 Additional comments:
-- This is a rather important update that fixes problems regarding user experience. 
-In the previous version this package override the native "help, ? and help.search" functions and users would be unable to undo that without deinstalling the package.
+- This release fixes an important bug that made the package unusable for Windows users and users in RStudio Server.
 
 ## Downstream dependencies
 
