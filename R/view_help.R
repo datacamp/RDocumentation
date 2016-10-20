@@ -13,6 +13,7 @@
 #' @importFrom httr GET
 #' @importFrom httr status_code
 #' @importFrom httr content
+#' @importFrom httr user_agent
 #' @importFrom httr content_type_json
 #' @importFrom httr timeout
 #' @importFrom httr cookies
@@ -21,30 +22,32 @@
 #' @importFrom utils browseURL
 #' @importFrom utils read.table
 view_help <- function(body, arg1, arg2){
-  go_to_url <- paste0(rdocs_url, "rstudio/view?viewer_pane=1")
-  rdocs_dir <- file.path(system.file(package = "RDocumentation"), "doc")
-  if(!dir.exists(rdocs_dir)) dir.create(rdocs_dir)
-  html_file <- file.path(rdocs_dir, "index.html")
+  
+  # create doc directory if doesn't exist yet
+  dir.create(rdocs_dir, showWarnings = FALSE)
+  
   if ( exists("package_not_local", envir = prototype)) {
-    package_not_local = prototype$package_not_local
+    package_not_local <- prototype$package_not_local
   } else {
-    package_not_local = ""
+    package_not_local <- ""
   }
   assign("package_not_local", "", envir = prototype)
+  
   tryCatch({
-    r <- POST(go_to_url, add_headers(Accept = "text/html"), config = (content_type_json()), body = rjson::toJSON(body), encode = "json", timeout(getOption("RDocumentation.timeOut")))
-    if (status_code(r) == 200) {
-      cred_path <- file.path(rdocs_dir, "config", "creds.txt")
-      if (file.exists(cred_path) && file.info(cred_path)$size > 0) {
-        creds <- as.character(read.table(cred_path, header = FALSE)$V1)
-      } else {
-        creds <- ""
-      }
-      writeBin(content(r, "raw"), html_file)
-      p <- tools::startDynamicHelp(NA)
+    go_to_url <- paste0(rdocs_url, "rstudio/view?viewer_pane=1")
+    resp <- POST(go_to_url,
+                 add_headers(Accept = "text/html"),
+                 user_agent("rstudio"),
+                 config = (content_type_json()),
+                 body = rjson::toJSON(body),
+                 encode = "json",
+                 timeout(getOption("RDocumentation.timeOut")))
+    
+    if (status_code(resp) == 200) {
+      writeBin(content(resp, "raw"), html_file)
       browser <- getOption("browser")
-      url <- paste0("http://127.0.0.1:", p, "/library/RDocumentation/doc/index.html?viewer_pane=1&Rstudio_port=",
-                    as.character(Sys.getenv("RSTUDIO_SESSION_PORT")), "&RS_SHARED_SECRET=", as.character(Sys.getenv("RS_SHARED_SECRET")), "&", creds)
+      p <- tools::startDynamicHelp(NA)
+      url <- build_local_url(p)
       browseURL(url, browser)
       return(invisible())
     } else{
@@ -65,4 +68,26 @@ view_help <- function(body, arg1, arg2){
       stop(e)
     }
   })
+}
+
+#' @importFrom httr parse_url
+build_local_url <- function(p) {
+  url <- sprintf("http://127.0.0.1:%s/library/RDocumentation/doc/index.html", p)
+  append <- "?viewer_pane=1"
+  rstudio_port <- Sys.getenv("RSTUDIO_SESSION_PORT")
+  if (nchar(rstudio_port) > 0) {
+    append <- c(append, paste0("Rstudio_port=", rstudio_port))
+  }
+  shared_secret <- Sys.getenv("RS_SHARED_SECRET")
+  if (nchar(shared_secret) > 0) {
+    append <- c(append, paste0("RS_SHARED_SECRET=", shared_secret))
+  }
+  # If in RStudio, send along creds.
+  if (nchar(Sys.getenv("RSTUDIO")) > 0 && file.exists(cred_path) && file.info(cred_path)$size > 0) {
+    creds <- paste0(readLines(cred_path), collapse = "")
+    comps <- parse_url(paste0("?", creds))$query[c("username", "password")]
+    append <- c(append, paste0(names(comps), "=", unlist(comps, use.names = FALSE)))
+  }
+  url <- paste0(url, paste0(append, collapse = "&"))
+  return(url)
 }
