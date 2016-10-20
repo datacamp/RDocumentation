@@ -55,7 +55,6 @@ view_help <- function(body, arg1, arg2){
     }
   },
   error = function(e){
-    print(e)
     if (package_not_local != "") {
       stop(paste0("package ", package_not_local, " is not in your local library"))
     }
