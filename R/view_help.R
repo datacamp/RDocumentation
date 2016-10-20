@@ -83,7 +83,8 @@ build_local_url <- function(p) {
   if (nchar(shared_secret) > 0) {
     append <- c(append, paste0("RS_SHARED_SECRET=", shared_secret))
   }
-  if (file.exists(cred_path) && file.info(cred_path)$size > 0) {
+  # If in RStudio, send along creds.
+  if (nchar(Sys.getenv("RSTUDIO")) > 0 && file.exists(cred_path) && file.info(cred_path)$size > 0) {
     creds <- paste0(readLines(cred_path), collapse = "")
     comps <- parse_url(paste0("?", creds))$query[c("username", "password")]
     append <- c(append, paste0(names(comps), "=", unlist(comps, use.names = FALSE)))
