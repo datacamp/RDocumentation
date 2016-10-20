@@ -1,3 +1,9 @@
+# RDocumentation 0.7.1
+
+* Remove https from viewer pane for RStudio Windows users
+
+* Now works on RStudio Server and standalone R
+
 # RDocumentation 0.7.0
 
 * Numerous bug fixes
