@@ -22,52 +22,28 @@
 #' @importFrom utils browseURL
 #' @importFrom utils read.table
 view_help <- function(body, arg1, arg2){
-  
+  print(body)
   # create doc directory if doesn't exist yet
   dir.create(rdocs_dir, showWarnings = FALSE)
-  
-  if ( exists("package_not_local", envir = prototype)) {
-    package_not_local <- prototype$package_not_local
-  } else {
-    package_not_local <- ""
+  go_to_url <- paste0(rdocs_url, "rstudio/view?viewer_pane=1")
+  resp <- POST(go_to_url,
+               add_headers(Accept = "text/html"),
+               user_agent("rstudio"),
+               config = (content_type_json()),
+               body = rjson::toJSON(body),
+               encode = "json",
+               timeout(getOption("RDocumentation.timeOut")))
+  print(resp)
+  if (status_code(resp) == 200) {
+    writeBin(content(resp, "raw"), html_file)
+    browser <- getOption("browser")
+    p <- tools::startDynamicHelp(NA)
+    url <- build_local_url(p)
+    browseURL(url, browser)
+    return(invisible())
+  } else{
+    stop("bad return status")
   }
-  assign("package_not_local", "", envir = prototype)
-  
-  tryCatch({
-    go_to_url <- paste0(rdocs_url, "rstudio/view?viewer_pane=1")
-    resp <- POST(go_to_url,
-                 add_headers(Accept = "text/html"),
-                 user_agent("rstudio"),
-                 config = (content_type_json()),
-                 body = rjson::toJSON(body),
-                 encode = "json",
-                 timeout(getOption("RDocumentation.timeOut")))
-    
-    if (status_code(resp) == 200) {
-      writeBin(content(resp, "raw"), html_file)
-      browser <- getOption("browser")
-      p <- tools::startDynamicHelp(NA)
-      url <- build_local_url(p)
-      browseURL(url, browser)
-      return(invisible())
-    } else{
-      stop("bad return status")
-    }
-  },
-  error = function(e){
-    if (package_not_local != "") {
-      stop(paste0("package ", package_not_local, " is not in your local library"))
-    }
-    if (body$called_function == "help" || body$called_function == "help_search") {
-      return(baseenv()$`class<-`(arg1, arg2))
-    } else if (body$called_function == "find_package") {
-      #this line will throw an error if the package does not exist before falling back on the original help function
-      base::find.package(get_package_from_URL(arg1))
-      return(utils::browseURL(arg1, arg2))
-    } else {
-      stop(e)
-    }
-  })
 }
 
 #' @importFrom httr parse_url

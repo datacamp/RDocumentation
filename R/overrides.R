@@ -1,60 +1,75 @@
-browseUrl.help <- function(url, browser) {
-  body = list(package_name = get_package_from_URL(url), called_function = "find_package")
-  return (view_help(body, url, browser))
-}
-
 # Overwrites the class<- function, converts help answers to json and sends them to RDocumentation
 `.class.help<-` <- function(package, value) {
+  
+  concat <- function(x) {
+    paste(x, collapse = ",")
+  }
+  
+  print("======= package")
+  print(package)
+  print("======= value")
+  print(value)
+  print("=======")
   if (value == "help_files_with_topic") {
-    if (!exists("package_not_local", envir = environment(help)) || environment(help)$package_not_local == "") {
-      packages <- lapply(package,function(path) {
-        temp = strsplit(path, "/")[[1]]
-        return (temp[length(temp)-2])
-      })
-      topic_names <- lapply(package, function(path) {
-        temp = strsplit(path, "/")[[1]]
-        return (tail(temp, n = 1))
-      })
-    }
-    else {
-      packages <- environment(help)$package_not_local
+    if (any(grepl("/", package))) {
+      # package was find locally
+      split <- strsplit(package, "/")
+      packages <- sapply(split, function(x) return(x[length(x)-2]))
+      topic_names <- sapply(split, tail, n = 1)
+    } else {
+      # package wasn't found locally
+      packages <- package
       topic_names <- ""
-    }     
-    body <- list(packages = as.character(paste(packages,sep = "",collapse = ",")), topic_names = as.character(paste(topic_names, sep = "", collapse = ",")),
-                call = as.character(paste(attributes(package)$call, sep = "", collapse = ",")), topic = as.character(attributes(package)$topic),
-                tried_all_packages = as.character(attributes(package)$tried_all_packages), help_type = as.character(attributes(package)$type), called_function="help")
+    }
+    body <- list(packages = concat(packages),
+                 topic_names = concat(topic_names),
+                 topic = attributes(package)$topic,
+                 called_function = "help")
+    str(body)
   } else {
-    hsearch_db_fields <- c("alias", "concept", "keyword", "name", "title")
-    elas_search_db_fields <- c("aliases","concept","keywords","name","title")
-    fields = lapply(package$fields, function(e){
-      return (elas_search_db_fields[which(hsearch_db_fields == e)])
-    })
-    body <- list(query = as.character(package[1]), fields = as.character(paste(fields, sep = "", collapse = ",")),
-                 type = as.character(package[3]), agrep = as.character(package[4]), ignore_case = as.character(package[5]),
-                 types = as.character(paste(package$types, sep = "", collapse = ",")), package = as.character(package[7]),
-                 matching_titles = as.character(gsub(" ", "", toString(unique(package$matches$Topic)), fixed = TRUE)),
-                 matching_packages = as.character(gsub(" ", "", toString(unique(package$matches$Package)), fixed = TRUE)), called_function="help_search")
+    str(package)
+    lut <- c(alias = "aliases", concept = "concpet", keyword = "keywords", name = "name", title = "title")
+    body <- package
+    body$fields <- lut[body$fields]
+    attributes(body$fields) <- NULL
+    body$matching_titles <- concat(unique(body$matches$Topic))
+    body$matching_packages <- concat(unique(body$matches$Package))
+    body$called_function <- "help_search"
+    body[c("lib.loc", "matches")] <- NULL
+    
+    str(body)
   }
   return (view_help(body, package, value))
 }
 
-# This find.package replacement function makes sure we can save the packagename to search it online, instead of returning an error.
-find.package.help <- function(packages, lib, verbose = FALSE){
-    tryCatch({
-        return (base::find.package(packages, lib, verbose))
-        },
-    error = function(cond){
-        #because we go over functioncalls and need access in the other function, we need to store this information internally
-        assign("package_not_local", packages, envir = environment(help))
-        return ("")
-    })
+find.package.help <- function(packages, lib, verbose = FALSE) {
+  tryCatch({
+    return (base::find.package(packages, lib, verbose))
+  }, error = function(cond){
+    # packages are not found locally, just return their names
+    return (packages)
+  })
+}
+
+index.search.help <- function(topic, paths, firstOnly = FALSE) {
+  res <- utils:::index.search(topic, paths, firstOnly)
+  if (length(res) == 0) {
+    if (any(grepl("/", paths))) {
+      return(sapply(strsplit(paths, "/"), tail, n = 1))
+    } else {
+      return("paths")
+    }
+  } else {
+    return(res)
+  }
 }
 
 # Prototype = childEnvironment of the utils-package environment
 prototype <- proto(environment(help), 
-                   browseURL = browseUrl.help, 
+                   # browseURL = browseUrl.help, 
                    `class<-` = `.class.help<-`, 
-                   find.package = find.package.help, 
+                   find.package = find.package.help,
+                   index.search = index.search.help,
                    help = utils::help, 
                    help.search = utils::help.search,
                    `?` = utils::`?`)
@@ -75,7 +90,11 @@ prototype <- proto(environment(help),
 #' @importFrom utils help
 help <- function(...){
   if (is_override()) {
-    careful_return(with(prototype, help)(...))
+    tryCatch({
+      invisible(with(prototype, help)(...))  
+    }, error = function(e) {
+      utils::help(...)
+    })
   } else {
     utils::help(...)
   }
@@ -87,7 +106,14 @@ help <- function(...){
 #' @importFrom utils help.search
 help.search <- function(...) {
   if (is_override()) {
-    careful_return(with(prototype, help.search)(...))
+    tryCatch({
+      invisible(with(prototype, help.search)(...))
+    }, error = function(e) {
+      print(e)
+      print(content(e, "text"))
+      utils::help.search(...)
+    })
+    
   } else {
     utils::help.search(...)
   }
@@ -98,17 +124,15 @@ help.search <- function(...) {
 #' @importFrom proto proto
 `?` <- function(...){
   if (is_override()) {
-    careful_return(with(prototype, `?`)(...))
+    tryCatch({
+      invisible(with(prototype, `?`)(...))
+    }, error = function(e) {
+      print(e)
+      utils::`?`(...)
+    })
   } else {
     utils::`?`(...)
   }
 }
 
-careful_return <- function(x) {
-  if (length(x) == 0) {
-    return(invisible())
-  } else{
-    return(x)
-  }
-}
 
