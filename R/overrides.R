@@ -106,7 +106,6 @@ help <- function(...){
     tryCatch({
       invisible(with(prototype, help)(...))  
     }, error = function(e) {
-      str(e)
       utils::help(...)
     })
   } else {
@@ -123,7 +122,6 @@ help.search <- function(...) {
     tryCatch({
       invisible(with(prototype, help.search)(...))
     }, error = function(e) {
-      str(e)
       utils::help.search(...)
     })
     
@@ -140,7 +138,6 @@ help.search <- function(...) {
     tryCatch({
       invisible(with(prototype, `?`)(...))
     }, error = function(e) {
-      str(e)
       utils::`?`(...)
     })
   } else {
