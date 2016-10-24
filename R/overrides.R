@@ -41,6 +41,8 @@ find.package.help <- function(packages, lib, verbose = FALSE) {
 }
 
 index.search.help <- function(topic, paths, firstOnly = FALSE) {
+  
+  # Copied from utils:::index.search()
   res <- character()
   for (p in paths) {
     if (file.exists(f <- file.path(p, "help", "aliases.rds"))) 
@@ -58,6 +60,8 @@ index.search.help <- function(topic, paths, firstOnly = FALSE) {
     if (firstOnly) 
       break
   }
+  
+  # Interpret res object
   if (length(res) == 0) {
     # index.search failed to find something meaningful.
     # Paths comes from find.package.help:
