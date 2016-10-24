@@ -1,8 +1,6 @@
 #' View the help
 #' 
 #' @param body body of the POST request to RDocumentation
-#' @param arg1 Same as arg1 of utils function
-#' @param arg2 Same as arg2 of utils function
 #' 
 #' @details Leverage https://www.rdocumentation.org/packages/tools/versions/3.3.1/topics/startDynamicHelp to render html page into the help pane
 #' As the page are rendered by the internal RStudio Server, it tricks RStudio into thinking that page is from the same origin as the other elements
@@ -21,8 +19,7 @@
 #' @importFrom rjson toJSON
 #' @importFrom utils browseURL
 #' @importFrom utils read.table
-view_help <- function(body, arg1, arg2){
-  print(body)
+view_help <- function(body){
   # create doc directory if doesn't exist yet
   dir.create(rdocs_dir, showWarnings = FALSE)
   go_to_url <- paste0(rdocs_url, "rstudio/view?viewer_pane=1")
@@ -33,7 +30,6 @@ view_help <- function(body, arg1, arg2){
                body = rjson::toJSON(body),
                encode = "json",
                timeout(getOption("RDocumentation.timeOut")))
-  print(resp)
   if (status_code(resp) == 200) {
     writeBin(content(resp, "raw"), html_file)
     browser <- getOption("browser")
@@ -61,8 +57,10 @@ build_local_url <- function(p) {
   # If in RStudio, send along creds.
   if (nchar(Sys.getenv("RSTUDIO")) > 0 && file.exists(cred_path) && file.info(cred_path)$size > 0) {
     creds <- paste0(readLines(cred_path), collapse = "")
-    comps <- parse_url(paste0("?", creds))$query[c("username", "password")]
-    append <- c(append, paste0(names(comps), "=", unlist(comps, use.names = FALSE)))
+    if (creds != "") {
+      comps <- parse_url(paste0("?", creds))$query[c("username", "password")]  
+      append <- c(append, paste0(names(comps), "=", unlist(comps, use.names = FALSE)))
+    }
   }
   url <- paste0(url, paste0(append, collapse = "&"))
   return(url)

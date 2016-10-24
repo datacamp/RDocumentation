@@ -1,15 +1,9 @@
 # Overwrites the class<- function, converts help answers to json and sends them to RDocumentation
 `.class.help<-` <- function(package, value) {
-  
   concat <- function(x) {
     paste(x, collapse = ",")
   }
   
-  print("======= package")
-  print(package)
-  print("======= value")
-  print(value)
-  print("=======")
   if (value == "help_files_with_topic") {
     if (any(grepl("/", package))) {
       # package was find locally
@@ -25,21 +19,16 @@
                  topic_names = concat(topic_names),
                  topic = attributes(package)$topic,
                  called_function = "help")
-    str(body)
   } else {
-    str(package)
-    lut <- c(alias = "aliases", concept = "concpet", keyword = "keywords", name = "name", title = "title")
+    lut <- c(alias = "aliases", concept = "concept", keyword = "keywords", name = "name", title = "title")
     body <- package
-    body$fields <- lut[body$fields]
-    attributes(body$fields) <- NULL
+    body$fields <- concat(lut[body$fields])
     body$matching_titles <- concat(unique(body$matches$Topic))
     body$matching_packages <- concat(unique(body$matches$Package))
     body$called_function <- "help_search"
-    body[c("lib.loc", "matches")] <- NULL
-    
-    str(body)
+    body[c("lib.loc", "matches", "types", "package")] <- NULL
   }
-  return (view_help(body, package, value))
+  return (view_help(body))
 }
 
 find.package.help <- function(packages, lib, verbose = FALSE) {
@@ -54,10 +43,16 @@ find.package.help <- function(packages, lib, verbose = FALSE) {
 index.search.help <- function(topic, paths, firstOnly = FALSE) {
   res <- utils:::index.search(topic, paths, firstOnly)
   if (length(res) == 0) {
+    # index.search failed to find something meaningful.
+    # Paths comes from find.package.help:
+    # - can be actual paths, or
+    # - simply package names
     if (any(grepl("/", paths))) {
+      # if a path, return all last elements
       return(sapply(strsplit(paths, "/"), tail, n = 1))
     } else {
-      return("paths")
+      # else, just return package names
+      return(paths)
     }
   } else {
     return(res)
