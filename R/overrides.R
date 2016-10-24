@@ -41,7 +41,23 @@ find.package.help <- function(packages, lib, verbose = FALSE) {
 }
 
 index.search.help <- function(topic, paths, firstOnly = FALSE) {
-  res <- utils:::index.search(topic, paths, firstOnly)
+  res <- character()
+  for (p in paths) {
+    if (file.exists(f <- file.path(p, "help", "aliases.rds"))) 
+      al <- readRDS(f)
+    else if (file.exists(f <- file.path(p, "help", "AnIndex"))) {
+      foo <- scan(f, what = list(a = "", b = ""), sep = "\t", 
+                  quote = "", na.strings = "", quiet = TRUE)
+      al <- structure(foo$b, names = foo$a)
+    }
+    else next
+    f <- al[topic]
+    if (is.na(f)) 
+      next
+    res <- c(res, file.path(p, "help", f))
+    if (firstOnly) 
+      break
+  }
   if (length(res) == 0) {
     # index.search failed to find something meaningful.
     # Paths comes from find.package.help:

@@ -26,7 +26,6 @@ test_that("build_local_url works", {
   #              paste0("http://127.0.0.1:123/library/RDocumentation/doc/index.html?",
   #                     "viewer_pane=1&Rstudio_port=123&RS_SHARED_SECRET=secret&", add))
   
-  Sys.setenv(RSTUDIO_SESSION_PORT = old_port,
-             RS_SHARED_SECRET = old_secret)
+  Sys.setenv(RSTUDIO_SESSION_PORT = old_port, RS_SHARED_SECRET = old_secret)
   file.remove(cred_path)
 })
