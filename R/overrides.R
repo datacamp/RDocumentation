@@ -64,9 +64,7 @@ index.search.help <- function(topic, paths, firstOnly = FALSE) {
   # Interpret res object
   if (length(res) == 0) {
     # index.search failed to find something meaningful.
-    # Paths comes from find.package.help:
-    # - can be actual paths, or
-    # - simply package names
+    # paths comes from find.package.help; can be actual paths, or simply package names
     if (any(grepl("/", paths))) {
       # if a path, return all last elements
       return(sapply(strsplit(paths, "/"), tail, n = 1))
@@ -79,7 +77,7 @@ index.search.help <- function(topic, paths, firstOnly = FALSE) {
   }
 }
 
-# Prototype = childEnvironment of the utils-package environment
+# Create proto object that has utils environment as parent
 prototype <- proto(environment(help), 
                    # browseURL = browseUrl.help, 
                    `class<-` = `.class.help<-`, 
@@ -124,7 +122,6 @@ help.search <- function(...) {
     tryCatch({
       invisible(with(prototype, help.search)(...))
     }, error = function(e) {
-      print(e)
       print(content(e, "text"))
       utils::help.search(...)
     })
@@ -142,7 +139,6 @@ help.search <- function(...) {
     tryCatch({
       invisible(with(prototype, `?`)(...))
     }, error = function(e) {
-      print(e)
       utils::`?`(...)
     })
   } else {
