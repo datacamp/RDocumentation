@@ -1,93 +1,3 @@
-# Overwrites the class<- function, converts help answers to json and sends them to RDocumentation
-`.class.help<-` <- function(package, value) {
-  concat <- function(x) {
-    paste(x, collapse = ",")
-  }
-  
-  if (value == "help_files_with_topic") {
-    if (any(grepl("/", package))) {
-      # package was find locally
-      split <- strsplit(package, "/")
-      packages <- sapply(split, function(x) return(x[length(x)-2]))
-      topic_names <- sapply(split, tail, n = 1)
-    } else {
-      # package wasn't found locally
-      packages <- package
-      topic_names <- ""
-    }
-    body <- list(packages = concat(packages),
-                 topic_names = concat(topic_names),
-                 topic = attributes(package)$topic,
-                 called_function = "help")
-  } else {
-    lut <- c(alias = "aliases", concept = "concept", keyword = "keywords", name = "name", title = "title")
-    body <- package
-    body$fields <- concat(lut[body$fields])
-    body$matching_titles <- concat(unique(body$matches$Topic))
-    body$matching_packages <- concat(unique(body$matches$Package))
-    body$called_function <- "help_search"
-    body[c("lib.loc", "matches", "types", "package")] <- NULL
-  }
-  return (view_help(body))
-}
-
-find.package.help <- function(packages, lib, verbose = FALSE) {
-  tryCatch({
-    return (base::find.package(packages, lib, verbose))
-  }, error = function(cond){
-    # packages are not found locally, just return their names
-    return (packages)
-  })
-}
-
-index.search.help <- function(topic, paths, firstOnly = FALSE) {
-  
-  # Copied from utils:::index.search()
-  res <- character()
-  for (p in paths) {
-    if (file.exists(f <- file.path(p, "help", "aliases.rds"))) 
-      al <- readRDS(f)
-    else if (file.exists(f <- file.path(p, "help", "AnIndex"))) {
-      foo <- scan(f, what = list(a = "", b = ""), sep = "\t", 
-                  quote = "", na.strings = "", quiet = TRUE)
-      al <- structure(foo$b, names = foo$a)
-    }
-    else next
-    f <- al[topic]
-    if (is.na(f)) 
-      next
-    res <- c(res, file.path(p, "help", f))
-    if (firstOnly) 
-      break
-  }
-  
-  # Interpret res object
-  if (length(res) == 0) {
-    # index.search failed to find something meaningful.
-    # paths comes from find.package.help; can be actual paths, or simply package names
-    if (any(grepl("/", paths))) {
-      # if a path, return all last elements
-      return(sapply(strsplit(paths, "/"), tail, n = 1))
-    } else {
-      # else, just return package names
-      return(paths)
-    }
-  } else {
-    return(res)
-  }
-}
-
-# Create proto object that has utils environment as parent
-prototype <- proto(environment(help), 
-                   # browseURL = browseUrl.help, 
-                   `class<-` = `.class.help<-`, 
-                   find.package = find.package.help,
-                   index.search = index.search.help,
-                   help = utils::help, 
-                   help.search = utils::help.search,
-                   `?` = utils::`?`)
-
-
 #' Documentation on RDocumentation or via the normal help system if offline
 #'
 #' Wrapper functions around the default help functions from the \code{utils} package. If online, you'll be redirected to RDocumentation. If you're offline, you'll fall back onto your locally installed documentation files.
@@ -101,16 +11,31 @@ prototype <- proto(environment(help),
 #' @export
 #' @importFrom proto proto
 #' @importFrom utils help
-help <- function(...){
-  if (is_override()) {
-    tryCatch({
-      invisible(with(prototype, help)(...))  
-    }, error = function(e) {
-      utils::help(...)
-    })
-  } else {
-    utils::help(...)
-  }
+help <- function(...) {
+  paths <- utils::help(...)
+  tryCatch({
+    if (!isTRUE(is_override())) {
+      stop("rdocs not active")
+    }
+    get_help(paths, as.character(match.call(utils::help)$package))
+  }, error = function(e) {
+    paths
+  })
+}
+
+#' @rdname documentation
+#' @export
+#' @importFrom proto proto
+`?` <- function(...){
+  paths <- utils::`?`(...)
+  tryCatch({
+    if (!isTRUE(is_override())) {
+      stop("rdocs not active")
+    }
+    get_help(paths)
+  }, error = function(e) {
+    paths
+  })
 }
 
 #' @rdname documentation
@@ -118,31 +43,48 @@ help <- function(...){
 #' @importFrom proto proto
 #' @importFrom utils help.search
 help.search <- function(...) {
-  if (is_override()) {
-    tryCatch({
-      invisible(with(prototype, help.search)(...))
-    }, error = function(e) {
-      utils::help.search(...)
-    })
-    
-  } else {
-    utils::help.search(...)
-  }
+  paths <- utils::help.search(...)
+  tryCatch({
+    if (!isTRUE(is_override())) {
+      stop("rdocs not active")
+    }
+    get_help_search(paths)
+  }, error = function(e) {
+    paths
+  })
 }
 
-#' @rdname documentation
-#' @export
-#' @importFrom proto proto
-`?` <- function(...){
-  if (is_override()) {
-    tryCatch({
-      invisible(with(prototype, `?`)(...))
-    }, error = function(e) {
-      utils::`?`(...)
-    })
-  } else {
-    utils::`?`(...)
-  }
+get_help_search <- function(paths) {
+  lut <- c(alias = "aliases", concept = "concept", keyword = "keywords", name = "name", title = "title")
+  body <- paths
+  body$fields <- concat(lut[body$fields])
+  body$matching_titles <- concat(unique(body$matches$Topic))
+  body$matching_packages <- concat(unique(body$matches$Package))
+  body$called_function <- "help_search"
+  body[c("lib.loc", "matches", "types", "package")] <- NULL
+  view_help(body)
 }
+
+get_help <- function(paths, package = "") {
+  if (!length(paths)) {
+    # no documentation found locally - figure out package name from help call, if any
+    packages <- if (length(package) == 0) "" else package
+    topic_names <- ""
+  } else {
+    # documentation was found
+    split <- strsplit(paths, "/")
+    packages <- sapply(split, function(x) return(x[length(x)-2]))
+    topic_names <- sapply(split, tail, n = 1)
+  }
+  
+  body <- list(packages = concat(packages),
+               topic_names = concat(topic_names),
+               topic = attributes(paths)$topic,
+               called_function = "help")
+  view_help(body)
+}
+
+
+
 
 

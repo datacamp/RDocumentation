@@ -16,8 +16,8 @@ Install a package from CRAN, BioConductor, or GitHub
 }
 \examples{
 \dontrun{
-install_package("dplyr", 1)
-install_package("RDocumentation", 3)
+  install_package("dplyr", 1)
+  install_package("RDocumentation", 3)
 }
 
 }

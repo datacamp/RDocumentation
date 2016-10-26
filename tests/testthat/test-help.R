@@ -28,10 +28,7 @@ test_that("help works", {
   # package nor topic exists: asdfasdf::asdf
   with_mock(
     view_help = identity,
-    expect_equal(help(asdf, asdfasdf), list(packages = "asdfasdf",
-                                            topic_names = "",
-                                            topic = "asdf",
-                                            called_function = "help"))
+    expect_error(help(asdf, asdfasdf))
   )
 })
 
@@ -71,10 +68,6 @@ test_that("help.search works", {
     expect_true(is.character(help.search("help", fields = c("title", "alias"))$matching_titles)),
     expect_true(is.character(help.search("help", fields = c("title", "alias"))$matching_packages))
   )
-})
-
-test_that("game coverage", {
-  expect_true(is.environment(RDocumentation:::prototype))
 })
 
 options(RDocs.override = FALSE)
