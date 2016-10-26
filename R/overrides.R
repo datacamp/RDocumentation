@@ -18,7 +18,7 @@ help <- function(...) {
   paths <- tryCatch({
     utils::help(...)  
   }, error = function(e) {
-    if (grepl("there is no package called ‘(.*?)’", e$message)) {
+    if (grepl("there is no package called", e$message)) {
       return(character(0))
     } else {
       stop(e)
