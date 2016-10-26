@@ -12,20 +12,31 @@
 #' @importFrom proto proto
 #' @importFrom utils help
 help <- function(...) {
-  paths <- utils::help(...)
+  mc <- match.call(utils::help)
+  topic <- as.character(mc$topic)
+  package <- as.character(mc$package)
+  paths <- tryCatch({
+    utils::help(...)  
+  }, error = function(e) {
+    if (grepl("there is no package called ‘(.*?)’", e$message)) {
+      return(character(0))
+    } else {
+      stop(e)
+    }
+  })
   tryCatch({
     if (!isTRUE(is_override())) {
       stop("rdocs not active")
     }
-    get_help(paths, as.character(match.call(utils::help)$package))
+    get_help(paths, package, topic)
   }, error = function(e) {
+    print(e)
     paths
   })
 }
 
 #' @rdname documentation
 #' @export
-#' @importFrom proto proto
 `?` <- function(...){
   paths <- utils::`?`(...)
   tryCatch({
@@ -40,7 +51,6 @@ help <- function(...) {
 
 #' @rdname documentation
 #' @export
-#' @importFrom proto proto
 #' @importFrom utils help.search
 help.search <- function(...) {
   paths <- utils::help.search(...)
@@ -65,26 +75,25 @@ get_help_search <- function(paths) {
   view_help(body)
 }
 
-get_help <- function(paths, package = "") {
+get_help <- function(paths, package = "", topic = "") {
   if (!length(paths)) {
-    # no documentation found locally - figure out package name from help call, if any
+    # no documentation found locally, use specified package and topic names
     packages <- if (length(package) == 0) "" else package
     topic_names <- ""
+    topic <- if (length(topic) == 0) "" else topic
   } else {
     # documentation was found
     split <- strsplit(paths, "/")
     packages <- sapply(split, function(x) return(x[length(x)-2]))
     topic_names <- sapply(split, tail, n = 1)
+    topic <- attr(paths, "topic")
   }
-  
   body <- list(packages = concat(packages),
                topic_names = concat(topic_names),
-               topic = attributes(paths)$topic,
+               topic = topic,
                called_function = "help")
   view_help(body)
 }
-
-
 
 
 

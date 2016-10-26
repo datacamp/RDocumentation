@@ -28,7 +28,10 @@ test_that("help works", {
   # package nor topic exists: asdfasdf::asdf
   with_mock(
     view_help = identity,
-    expect_error(help(asdf, asdfasdf))
+    expect_equal(help(asdf, asdfasdf), list(packages = "asdfasdf",
+                                            topic_names = "",
+                                            topic = "asdf",
+                                            called_function = "help"))
   )
 })
 
