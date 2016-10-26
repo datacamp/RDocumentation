@@ -30,7 +30,6 @@ help <- function(...) {
     }
     get_help(paths, package, topic)
   }, error = function(e) {
-    print(e)
     paths
   })
 }
