@@ -1,65 +1,3 @@
-browseUrl.help <- function(url, browser) {
-  body = list(package_name = get_package_from_URL(url), called_function = "find_package")
-  return (view_help(body, url, browser))
-}
-
-# Overwrites the class<- function, converts help answers to json and sends them to RDocumentation
-`.class.help<-` <- function(package, value) {
-  if (value == "help_files_with_topic") {
-    if (!exists("package_not_local", envir = environment(help)) || environment(help)$package_not_local == "") {
-      packages <- lapply(package,function(path) {
-        temp = strsplit(path, "/")[[1]]
-        return (temp[length(temp)-2])
-      })
-      topic_names <- lapply(package, function(path) {
-        temp = strsplit(path, "/")[[1]]
-        return (tail(temp, n = 1))
-      })
-    }
-    else {
-      packages <- environment(help)$package_not_local
-      topic_names <- ""
-    }     
-    body <- list(packages = as.character(paste(packages,sep = "",collapse = ",")), topic_names = as.character(paste(topic_names, sep = "", collapse = ",")),
-                call = as.character(paste(attributes(package)$call, sep = "", collapse = ",")), topic = as.character(attributes(package)$topic),
-                tried_all_packages = as.character(attributes(package)$tried_all_packages), help_type = as.character(attributes(package)$type), called_function="help")
-  } else {
-    hsearch_db_fields <- c("alias", "concept", "keyword", "name", "title")
-    elas_search_db_fields <- c("aliases","concept","keywords","name","title")
-    fields = lapply(package$fields, function(e){
-      return (elas_search_db_fields[which(hsearch_db_fields == e)])
-    })
-    body <- list(query = as.character(package[1]), fields = as.character(paste(fields, sep = "", collapse = ",")),
-                 type = as.character(package[3]), agrep = as.character(package[4]), ignore_case = as.character(package[5]),
-                 types = as.character(paste(package$types, sep = "", collapse = ",")), package = as.character(package[7]),
-                 matching_titles = as.character(gsub(" ", "", toString(unique(package$matches$Topic)), fixed = TRUE)),
-                 matching_packages = as.character(gsub(" ", "", toString(unique(package$matches$Package)), fixed = TRUE)), called_function="help_search")
-  }
-  return (view_help(body, package, value))
-}
-
-# This find.package replacement function makes sure we can save the packagename to search it online, instead of returning an error.
-find.package.help <- function(packages, lib, verbose = FALSE){
-    tryCatch({
-        return (base::find.package(packages, lib, verbose))
-        },
-    error = function(cond){
-        #because we go over functioncalls and need access in the other function, we need to store this information internally
-        assign("package_not_local", packages, envir = environment(help))
-        return ("")
-    })
-}
-
-# Prototype = childEnvironment of the utils-package environment
-prototype <- proto(environment(help), 
-                   browseURL = browseUrl.help, 
-                   `class<-` = `.class.help<-`, 
-                   find.package = find.package.help, 
-                   help = utils::help, 
-                   help.search = utils::help.search,
-                   `?` = utils::`?`)
-
-
 #' Documentation on RDocumentation or via the normal help system if offline
 #'
 #' Wrapper functions around the default help functions from the \code{utils} package. If online, you'll be redirected to RDocumentation. If you're offline, you'll fall back onto your locally installed documentation files.
@@ -73,42 +11,89 @@ prototype <- proto(environment(help),
 #' @export
 #' @importFrom proto proto
 #' @importFrom utils help
-help <- function(...){
-  if (is_override()) {
-    careful_return(with(prototype, help)(...))
-  } else {
-    utils::help(...)
-  }
+help <- function(...) {
+  mc <- match.call(utils::help)
+  topic <- as.character(mc$topic)
+  package <- as.character(mc$package)
+  paths <- tryCatch({
+    utils::help(...)  
+  }, error = function(e) {
+    if (grepl("there is no package called", e$message)) {
+      return(character(0))
+    } else {
+      stop(e)
+    }
+  })
+  tryCatch({
+    if (!isTRUE(is_override())) {
+      stop("rdocs not active")
+    }
+    get_help(paths, package, topic)
+  }, error = function(e) {
+    print(e)
+    paths
+  })
 }
 
 #' @rdname documentation
 #' @export
-#' @importFrom proto proto
+`?` <- function(...){
+  paths <- utils::`?`(...)
+  tryCatch({
+    if (!isTRUE(is_override())) {
+      stop("rdocs not active")
+    }
+    get_help(paths)
+  }, error = function(e) {
+    paths
+  })
+}
+
+#' @rdname documentation
+#' @export
 #' @importFrom utils help.search
 help.search <- function(...) {
-  if (is_override()) {
-    careful_return(with(prototype, help.search)(...))
-  } else {
-    utils::help.search(...)
-  }
+  paths <- utils::help.search(...)
+  tryCatch({
+    if (!isTRUE(is_override())) {
+      stop("rdocs not active")
+    }
+    get_help_search(paths)
+  }, error = function(e) {
+    paths
+  })
 }
 
-#' @rdname documentation
-#' @export
-#' @importFrom proto proto
-`?` <- function(...){
-  if (is_override()) {
-    careful_return(with(prototype, `?`)(...))
-  } else {
-    utils::`?`(...)
-  }
+get_help_search <- function(paths) {
+  lut <- c(alias = "aliases", concept = "concept", keyword = "keywords", name = "name", title = "title")
+  body <- paths
+  body$fields <- concat(lut[body$fields])
+  body$matching_titles <- concat(unique(body$matches$Topic))
+  body$matching_packages <- concat(unique(body$matches$Package))
+  body$called_function <- "help_search"
+  body[c("lib.loc", "matches", "types", "package")] <- NULL
+  view_help(body)
 }
 
-careful_return <- function(x) {
-  if (length(x) == 0) {
-    return(invisible())
-  } else{
-    return(x)
+get_help <- function(paths, package = "", topic = "") {
+  if (!length(paths)) {
+    # no documentation found locally, use specified package and topic names
+    packages <- if (length(package) == 0) "" else package
+    topic_names <- ""
+    topic <- if (length(topic) == 0) "" else topic
+  } else {
+    # documentation was found
+    split <- strsplit(paths, "/")
+    packages <- sapply(split, function(x) return(x[length(x)-2]))
+    topic_names <- sapply(split, tail, n = 1)
+    topic <- attr(paths, "topic")
   }
+  body <- list(packages = concat(packages),
+               topic_names = concat(topic_names),
+               topic = topic,
+               called_function = "help")
+  view_help(body)
 }
+
+
 

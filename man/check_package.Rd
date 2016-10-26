@@ -12,7 +12,7 @@ check_package(pkg, version)
 \item{version}{the latest version to be checked}
 }
 \value{
-1 if the package is not installed; -1 if the package is not up to date; 0 if the package if the package is installed.
+1 if the package is not installed; -1 if the package is not up to date; 0 if the package if the package is installed and up to date.
 }
 \description{
 Check if a package is installed for the user.

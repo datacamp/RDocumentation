@@ -79,11 +79,13 @@ remove_from_profile <- function(the_line) {
 }
 
 ask_questions <- function() {
-  if (!is_autoload()) {
-    ask_autoload()
-  }
-  if (!is_override()) {
-    ask_override()
+  if (interactive()) {
+    if (!is_autoload()) {
+      ask_autoload()
+    }
+    if (!is_override()) {
+      ask_override()
+    }  
   }
 }
 

@@ -8,7 +8,7 @@ cred_path <- file.path(system.file(package = "RDocumentation"), "config", "creds
 #' @param pkg Name of the package
 #' @param version the latest version to be checked
 #' 
-#' @return 1 if the package is not installed; -1 if the package is not up to date; 0 if the package if the package is installed.
+#' @return 1 if the package is not installed; -1 if the package is not up to date; 0 if the package if the package is installed and up to date.
 #' 
 #' @examples
 #' \dontrun{
@@ -56,4 +56,8 @@ get_r_profile <- function(){
   }
   Rprofile <- file.path(Sys.getenv("HOME"), ".Rprofile")
   return (Rprofile)
+}
+
+concat <- function(x) {
+  paste(x, collapse = ",")
 }

@@ -9,9 +9,9 @@
 \usage{
 help(...)
 
-help.search(...)
-
 "?"(...)
+
+help.search(...)
 }
 \arguments{
 \item{...}{the arguments you'd pass to the default \code{utils} function with the same name}

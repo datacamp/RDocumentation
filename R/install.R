@@ -5,8 +5,8 @@ utils::globalVariables("biocLite")
 #' @param type the type of the package, type 1 means the package comes from CRAN, type 2 packages are from BioConductor, type 3 packages are from GitHub and type 4 packages are by default part of R.
 #' @examples
 #' \dontrun{
-#' install_package("dplyr", 1)
-#' install_package("RDocumentation", 3)
+#'   install_package("dplyr", 1)
+#'   install_package("RDocumentation", 3)
 #' }
 #' 
 #' @export
@@ -21,7 +21,7 @@ install_package <- function(mypkg, type){
   else if (type == 2) {
     # bioconductor
     source("https://bioconductor.org/biocLite.R")
-    if (!is.element(mypkg, installed.packages()[ ,1])){
+    if (!is.element(mypkg, installed.packages()[ ,1])) {
       biocLite(mypkg)
     } else {
       biocLite("BiocUpgrade")
@@ -29,8 +29,8 @@ install_package <- function(mypkg, type){
   } else if (type == 3) {
     githubinstall(mypkg)
   } else if (type == 4) {
-    cat("Can not install this package, you need to upgrade your R installation")
-  } else{
-    cat("Something went wrong, could not install this package")
+    cat("RDocumentation cannot install this package, you need to upgrade your R installation")
+  } else {
+    cat("RDocumentation could not install this package; something went wrong.")
   }
 } 

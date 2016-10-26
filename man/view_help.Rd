@@ -4,14 +4,10 @@
 \alias{view_help}
 \title{View the help}
 \usage{
-view_help(body, arg1, arg2)
+view_help(body)
 }
 \arguments{
 \item{body}{body of the POST request to RDocumentation}
-
-\item{arg1}{Same as arg1 of utils function}
-
-\item{arg2}{Same as arg2 of utils function}
 }
 \description{
 View the help
