@@ -1,5 +1,7 @@
 # RDocumentation 0.7.1
 
+* Less invasive overrides
+
 * Remove https from viewer pane for RStudio Windows users
 
 * Now works on RStudio Server and standalone R

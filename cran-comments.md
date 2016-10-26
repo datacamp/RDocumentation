@@ -11,6 +11,10 @@
 Additional comments:
 - This release fixes an important bug that made the package unusable for Windows users and users in RStudio Server.
 
+## Additional comments
+
+It was broken on r-devel on previous submission, fixed now.
+
 ## Downstream dependencies
 
 There are no downstream dependencies for this package.
