@@ -15,7 +15,7 @@ To install the latest stable version from CRAN:
 install.packages("RDocumentation")
 ```
 
-You can also install the latest development version with `devtools`:
+You can also use `devtools` to install the latest development version:
 
 ```R
 devtools::install_github("datacamp/RDocumentation")
