@@ -51,7 +51,8 @@ disable_override <- function() {
 }
 
 
-autoload_line <- "options(defaultPackages = c(getOption('defaultPackages'), 'RDocumentation'))"
+autoload_line <- paste("if(isTRUE('RDocumentation' %in% rownames(utils::installed.packages())))",
+                       "options(defaultPackages = c(getOption('defaultPackages'), 'RDocumentation'))")
 override_line <- "options(RDocs.override = TRUE)"
 
 is_autoload <- function() {
@@ -69,12 +70,14 @@ is_in_profile <- function(the_line) {
 add_to_profile <- function(the_line) {
   rprofile <- get_r_profile()
   lines <- readLines(rprofile)
+  # Keep all non-matching lines and append line
   write(c(lines[lines != the_line], the_line), file = rprofile)
 }
 
 remove_from_profile <- function(the_line) {
   rprofile <- get_r_profile()
   lines <- readLines(rprofile)
+  # Keep all non-matching lines
   write(lines[lines != the_line], file = rprofile)
 }
 
