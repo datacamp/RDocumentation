@@ -20,7 +20,7 @@
 #' @export
 #' @rdname defaults
 enable_autoload <- function(){
-  add_to_profile(autoload_line)
+  add_to_profile(autoload_line, autoload_line_old)
   return (invisible())
 }
 
@@ -31,14 +31,14 @@ makeDefault <- enable_autoload # for backwards compatibility
 #' @export
 #' @rdname defaults
 disable_autoload <- function() {
-  remove_from_profile(autoload_line)
+  remove_from_profile(autoload_line, autoload_line_old)
 }
 
 #' @export
 #' @rdname defaults
 enable_override <- function() {
   add_to_profile(override_line)
-  # Enable is in the current session as well!
+  # Enable override in the current session as well!
   options(RDocs.override = TRUE)
 }
 
@@ -50,35 +50,34 @@ disable_override <- function() {
   options(RDocs.override = FALSE)
 }
 
-
-autoload_line <- paste("if(isTRUE('RDocumentation' %in% rownames(utils::installed.packages())))",
-                       "options(defaultPackages = c(getOption('defaultPackages'), 'RDocumentation'))")
+autoload_line_old <- "options(defaultPackages = c(getOption('defaultPackages'), 'RDocumentation'))"
+autoload_line <- paste("if(isTRUE('RDocumentation' %in% rownames(utils::installed.packages())))", autoload_line_old)
 override_line <- "options(RDocs.override = TRUE)"
 
 is_autoload <- function() {
-  is_in_profile(autoload_line)
+  is_in_profile(c(autoload_line, autoload_line_old))
 }
 
 is_override <- function() {
   getOption("RDocs.override", default = FALSE)
 }
 
-is_in_profile <- function(the_line) {
-  the_line %in% readLines(get_r_profile())
+is_in_profile <- function(targets) {
+  any(targets %in% readLines(get_r_profile()))
 }
 
-add_to_profile <- function(the_line) {
+add_to_profile <- function(the_line, old_lines = "") {
   rprofile <- get_r_profile()
   lines <- readLines(rprofile)
   # Keep all non-matching lines and append line
-  write(c(lines[lines != the_line], the_line), file = rprofile)
+  write(c(lines[!lines %in% c(the_line, old_lines)], the_line), file = rprofile)
 }
 
-remove_from_profile <- function(the_line) {
+remove_from_profile <- function(the_line, old_lines = "") {
   rprofile <- get_r_profile()
   lines <- readLines(rprofile)
   # Keep all non-matching lines
-  write(lines[lines != the_line], file = rprofile)
+  write(lines[!lines %in% c(the_line, old_lines)], file = rprofile)
 }
 
 ask_questions <- function() {
