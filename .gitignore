@@ -1,6 +1,7 @@
 .Rproj.user
 .Rhistory
 .RData
+.DS_Store
 Rdocumentation.Rproj
 doc/
 doc/*

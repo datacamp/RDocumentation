@@ -15,6 +15,12 @@ help <- function(...) {
   mc <- match.call(utils::help)
   topic <- as.character(mc$topic)
   package <- as.character(mc$package)
+
+  if (length(topic) == 0 && length(package) != 0) {
+    # Fall back on default documentation view for package, for now
+    return(utils::help(...))
+  }
+
   paths <- tryCatch({
     utils::help(...)  
   }, error = function(e) {
@@ -93,6 +99,3 @@ get_help <- function(paths, package = "", topic = "") {
                called_function = "help")
   view_help(body)
 }
-
-
-
