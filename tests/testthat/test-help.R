@@ -73,4 +73,5 @@ test_that("help.search works", {
   )
 })
 
-options(RDocs.override = FALSE)
+disable_autoload()
+disable_override()
