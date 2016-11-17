@@ -45,3 +45,10 @@ The package overwrites the basic help functions from the utils package:
 <img style="margin-left:20px" width="557" alt="Run examples" src="https://cloud.githubusercontent.com/assets/1741726/17591750/baa828a2-5fdf-11e6-931c-24472ea4b236.png">
 
 * Post reviews and help package authors to improve their documentation
+
+* You can always disable RDocumentation:
+
+```R
+disable_override() # If you ask for help, standard documentation will be shown
+disable_autoload() # you don't auto-load RDocumentation when you start R
+```
