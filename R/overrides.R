@@ -13,32 +13,33 @@
 #' @importFrom utils help
 help <- function(...) {
   mc <- match.call(utils::help)
-  topic <- as.character(mc$topic)
   package <- as.character(mc$package)
+  topic <- as.character(mc$topic)
 
   if (length(topic) == 0 && length(package) != 0) {
-    # Fall back on default documentation view for package, for now
-    return(utils::help(...))
+    body <- get_find_package_body(package)
+    view_help_wrap(body, utils::help(...))
+  } else {
+    paths <- tryCatch({
+      utils::help(...)
+    }, error = function(e) {
+      if (grepl("there is no package called", e$message)) {
+        return(character(0))
+      } else {
+        stop(e)
+      }
+    })
+    body <- get_help_body(paths, package, topic)
+    view_help_wrap(body, paths)
   }
-
-  paths <- tryCatch({
-    utils::help(...)  
-  }, error = function(e) {
-    if (grepl("there is no package called", e$message)) {
-      return(character(0))
-    } else {
-      stop(e)
-    }
-  })
-  
-  get_help_wrap(get_help, paths, package = package, topic = topic)
 }
 
 #' @rdname documentation
 #' @export
 `?` <- function(...){
   paths <- utils::`?`(...)
-  get_help_wrap(get_help, paths)
+  body <- get_help_body(paths)
+  view_help_wrap(body, paths)
 }
 
 #' @rdname documentation
@@ -46,47 +47,6 @@ help <- function(...) {
 #' @importFrom utils help.search
 help.search <- function(...) {
   paths <- utils::help.search(...)
-  get_help_wrap(get_help_search, paths)
-}
-
-get_help_wrap <- function(fun, paths, ...) {
-  tryCatch({
-    if (!isTRUE(is_override())) {
-      stop("rdocs not active")
-    }
-    fun(paths, ...)
-  }, error = function(e) {
-    paths
-  })
-}
-
-get_help_search <- function(paths) {
-  lut <- c(alias = "aliases", concept = "concept", keyword = "keywords", name = "name", title = "title")
-  body <- paths
-  body$fields <- concat(lut[body$fields])
-  body$matching_titles <- concat(unique(body$matches$Topic))
-  body$matching_packages <- concat(unique(body$matches$Package))
-  body$called_function <- "help_search"
-  body[c("lib.loc", "matches", "types", "package")] <- NULL
-  view_help(body)
-}
-
-get_help <- function(paths, package = "", topic = "") {
-  if (!length(paths)) {
-    # no documentation found locally, use specified package and topic names
-    packages <- if (length(package) == 0) "" else package
-    topic_names <- ""
-    topic <- if (length(topic) == 0) "" else topic
-  } else {
-    # documentation was found
-    split <- strsplit(paths, "/")
-    packages <- sapply(split, function(x) return(x[length(x)-2]))
-    topic_names <- sapply(split, tail, n = 1)
-    topic <- attr(paths, "topic")
-  }
-  body <- list(packages = concat(packages),
-               topic_names = concat(topic_names),
-               topic = topic,
-               called_function = "help")
-  view_help(body)
+  body <- get_help_search_body(paths)
+  view_help_wrap(body, paths)
 }
