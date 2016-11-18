@@ -1,7 +1,7 @@
 Package: RDocumentation
 Type: Package
 Title: Integrate R with 'RDocumentation.org'
-Version: 0.7.2
+Version: 0.8.0
 Authors@R: c(
     person("Ludovic", "Vannoorenberghe", email = "ludovic@datacamp.com", role = "cre"),
     person("Jonathan", "Cornelissen", email = "jonathan@datacamp.com", role = "aut"),
