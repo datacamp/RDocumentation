@@ -20,16 +20,13 @@ test_that("autoloads",{
 })
 
 test_that("overrides", {
-  disable_override()
-  expect_false(override_line %in% readLines(get_r_profile()))
-  expect_false(is_override())
-  enable_override()
-  expect_true(override_line %in% readLines(get_r_profile()))
-  expect_true(is_override())
-  disable_override()
-  expect_false(override_line %in% readLines(get_r_profile()))
-  expect_false(is_override())
+  disable_rdocs()
+  expect_false(rdocs_active())
+  enable_rdocs()
+  expect_true(rdocs_active())
+  disable_rdocs()
+  expect_false(rdocs_active())
 })
 
 disable_autoload()
-disable_override()
+disable_rdocs()

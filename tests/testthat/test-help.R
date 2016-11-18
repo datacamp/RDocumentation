@@ -1,6 +1,6 @@
 context("help")
 
-options(RDocs.override = TRUE)
+enable_rdocs()
 
 test_that("help works", {
   # package + topic exists: base::mean
@@ -13,25 +13,37 @@ test_that("help works", {
     expect_equal(help(mean), list(packages = "base",
                                   topic_names = "mean",
                                   topic = "mean",
-                                  called_function = "help"))
+                                  called_function = "help")),
+    .env = "RDocumentation"
   )
-  
+
   # package exists, but topic not in there: utils::mean
   with_mock(
     view_help = identity,
     expect_equal(help(mean, utils), list(packages = "utils",
                                          topic_names = "",
                                          topic = "mean",
-                                         called_function = "help"))
+                                         called_function = "help")),
+    .env = "RDocumentation"
   )
-  
+
   # package nor topic exists: asdfasdf::asdf
   with_mock(
     view_help = identity,
     expect_equal(help(asdf, asdfasdf), list(packages = "asdfasdf",
                                             topic_names = "",
                                             topic = "asdf",
-                                            called_function = "help"))
+                                            called_function = "help")),
+    .env = "RDocumentation"
+  )
+
+  # Only package specified
+  with_mock(
+    view_help = identity,
+    expect_equal(help(package = "base"),
+                 list(called_function = "find_package",
+                      package_name = "base")),
+    .env = "RDocumentation"
   )
 })
 
@@ -45,9 +57,10 @@ test_that("help.search works", {
     expect_equal(help.search("mean")$agrep, NULL),
     expect_true(help.search("mean")$ignore.case),
     expect_true(is.character(help.search("mean")$matching_titles)),
-    expect_true(is.character(help.search("mean")$matching_packages))
+    expect_true(is.character(help.search("mean")$matching_packages)),
+    .env = "RDocumentation"
   )
-  
+
   with_mock(
     view_help = identity,
     expect_true(is.list(help.search("help", fields= "title"))),
@@ -57,9 +70,10 @@ test_that("help.search works", {
     expect_equal(help.search("help", fields = "title")$agrep, NULL),
     expect_true(help.search("help", fields = "title")$ignore.case),
     expect_true(is.character(help.search("help", fields = "title")$matching_titles)),
-    expect_true(is.character(help.search("help", fields = "title")$matching_packages))
+    expect_true(is.character(help.search("help", fields = "title")$matching_packages)),
+    .env = "RDocumentation"
   )
-  
+
   with_mock(
     view_help = identity,
     expect_true(is.list(help.search("help", fields= c("title", "alias")))),
@@ -69,9 +83,9 @@ test_that("help.search works", {
     expect_equal(help.search("help", fields = c("title", "alias"))$agrep, NULL),
     expect_true(help.search("help", fields = c("title", "alias"))$ignore.case),
     expect_true(is.character(help.search("help", fields = c("title", "alias"))$matching_titles)),
-    expect_true(is.character(help.search("help", fields = c("title", "alias"))$matching_packages))
+    expect_true(is.character(help.search("help", fields = c("title", "alias"))$matching_packages)),
+    .env = "RDocumentation"
   )
 })
 
-disable_autoload()
-disable_override()
+disable_rdocs()

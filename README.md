@@ -22,11 +22,25 @@ devtools::install_github("datacamp/RDocumentation")
 library(RDocumentation)
 ```
 
-The package overwrites the basic help functions from the utils package:
+The package overrides the basic help functions from the utils package:
 
 * `help()` : for help about specific topic or packages
 * `help.search()` : for help about fuzzy topics or packages
 * `?`: shortcut for the two help functions, one question mark calls `help`, two calls `help.search`.
+
+The first time you load `RDocumentation`, you will be asked to automatically load the package when R starts. If you want to control this afterwards, you can use
+
+```R
+enable_autoload()
+disable_autoload()
+```
+
+When `RDocumentation` is loaded in your R session, the help functionality will be overridden to show documentation in RDocuemntation. To enable/disable this setting in your session, you can use
+
+```R
+enable_rdocs() # executed when you load RDocumentation
+disable_rdocs()
+```
 
 # Features:
 
@@ -46,9 +60,3 @@ The package overwrites the basic help functions from the utils package:
 
 * Post reviews and help package authors to improve their documentation
 
-* You can always disable RDocumentation:
-
-```R
-disable_override() # If you ask for help, standard documentation will be shown
-disable_autoload() # you don't auto-load RDocumentation when you start R
-```

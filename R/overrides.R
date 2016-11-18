@@ -12,87 +12,56 @@
 #' @importFrom proto proto
 #' @importFrom utils help
 help <- function(...) {
-  mc <- match.call(utils::help)
-  topic <- as.character(mc$topic)
-  package <- as.character(mc$package)
-  paths <- tryCatch({
-    utils::help(...)  
-  }, error = function(e) {
-    if (grepl("there is no package called", e$message)) {
-      return(character(0))
+  with_override({
+    mc <- match.call(utils::help)
+    package <- as.character(mc$package)
+    topic <- as.character(mc$topic)
+
+    if (length(topic) == 0 && length(package) != 0) {
+      body <- get_find_package_body(package)
+      view_help(body)
     } else {
-      stop(e)
+      paths <- tryCatch({
+        utils::help(...)
+      }, error = function(e) {
+        if (grepl("there is no package called", e$message)) {
+          return(character(0))
+        } else {
+          stop(e)
+        }
+      })
+      body <- get_help_body(paths, package, topic)
+      view_help(body)
     }
-  })
-  tryCatch({
-    if (!isTRUE(is_override())) {
-      stop("rdocs not active")
-    }
-    get_help(paths, package, topic)
-  }, error = function(e) {
-    paths
-  })
+  }, alternative = utils::help(...))
 }
 
 #' @rdname documentation
 #' @export
 `?` <- function(...){
-  paths <- utils::`?`(...)
-  tryCatch({
-    if (!isTRUE(is_override())) {
-      stop("rdocs not active")
-    }
-    get_help(paths)
-  }, error = function(e) {
-    paths
-  })
+  with_override({
+    paths <- utils::`?`(...)
+    body <- get_help_body(paths)
+    view_help(body)
+  }, alternative = utils::`?`(...))
 }
 
 #' @rdname documentation
 #' @export
 #' @importFrom utils help.search
 help.search <- function(...) {
-  paths <- utils::help.search(...)
+  with_override({
+    paths <- utils::help.search(...)
+    body <- get_help_search_body(paths)
+    view_help(body)
+  }, alternative = utils::help.search())
+}
+
+with_override <- function(code, alternative) {
   tryCatch({
-    if (!isTRUE(is_override())) {
-      stop("rdocs not active")
-    }
-    get_help_search(paths)
+    stopifnot(isTRUE(rdocs_active()))
+    force(code)
   }, error = function(e) {
-    paths
+    force(alternative)
   })
 }
-
-get_help_search <- function(paths) {
-  lut <- c(alias = "aliases", concept = "concept", keyword = "keywords", name = "name", title = "title")
-  body <- paths
-  body$fields <- concat(lut[body$fields])
-  body$matching_titles <- concat(unique(body$matches$Topic))
-  body$matching_packages <- concat(unique(body$matches$Package))
-  body$called_function <- "help_search"
-  body[c("lib.loc", "matches", "types", "package")] <- NULL
-  view_help(body)
-}
-
-get_help <- function(paths, package = "", topic = "") {
-  if (!length(paths)) {
-    # no documentation found locally, use specified package and topic names
-    packages <- if (length(package) == 0) "" else package
-    topic_names <- ""
-    topic <- if (length(topic) == 0) "" else topic
-  } else {
-    # documentation was found
-    split <- strsplit(paths, "/")
-    packages <- sapply(split, function(x) return(x[length(x)-2]))
-    topic_names <- sapply(split, tail, n = 1)
-    topic <- attr(paths, "topic")
-  }
-  body <- list(packages = concat(packages),
-               topic_names = concat(topic_names),
-               topic = topic,
-               called_function = "help")
-  view_help(body)
-}
-
-
-
