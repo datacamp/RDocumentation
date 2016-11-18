@@ -12,41 +12,56 @@
 #' @importFrom proto proto
 #' @importFrom utils help
 help <- function(...) {
-  mc <- match.call(utils::help)
-  package <- as.character(mc$package)
-  topic <- as.character(mc$topic)
+  with_override({
+    mc <- match.call(utils::help)
+    package <- as.character(mc$package)
+    topic <- as.character(mc$topic)
 
-  if (length(topic) == 0 && length(package) != 0) {
-    body <- get_find_package_body(package)
-    view_help_wrap(body, utils::help(...))
-  } else {
-    paths <- tryCatch({
-      utils::help(...)
-    }, error = function(e) {
-      if (grepl("there is no package called", e$message)) {
-        return(character(0))
-      } else {
-        stop(e)
-      }
-    })
-    body <- get_help_body(paths, package, topic)
-    view_help_wrap(body, paths)
-  }
+    if (length(topic) == 0 && length(package) != 0) {
+      body <- get_find_package_body(package)
+      view_help(body)
+    } else {
+      paths <- tryCatch({
+        utils::help(...)
+      }, error = function(e) {
+        if (grepl("there is no package called", e$message)) {
+          return(character(0))
+        } else {
+          stop(e)
+        }
+      })
+      body <- get_help_body(paths, package, topic)
+      view_help(body)
+    }
+  }, alternative = utils::help(...))
 }
 
 #' @rdname documentation
 #' @export
 `?` <- function(...){
-  paths <- utils::`?`(...)
-  body <- get_help_body(paths)
-  view_help_wrap(body, paths)
+  with_override({
+    paths <- utils::`?`(...)
+    body <- get_help_body(paths)
+    view_help(body)
+  }, alternative = utils::`?`(...))
 }
 
 #' @rdname documentation
 #' @export
 #' @importFrom utils help.search
 help.search <- function(...) {
-  paths <- utils::help.search(...)
-  body <- get_help_search_body(paths)
-  view_help_wrap(body, paths)
+  with_override({
+    paths <- utils::help.search(...)
+    body <- get_help_search_body(paths)
+    view_help(body)
+  }, alternative = utils::help.search())
+}
+
+with_override <- function(code, alternative) {
+  tryCatch({
+    stopifnot(isTRUE(is_override()))
+    force(code)
+  }, error = function(e) {
+    force(alternative)
+  })
 }
