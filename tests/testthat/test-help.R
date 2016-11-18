@@ -36,9 +36,9 @@ test_that("help works", {
 
   # only specify package: fall back on normal behavior
   op <- options(help_type = "text")
-  x <- help(package = "dplyr")
+  x <- help(package = "base")
   expect_equal(class(x), "packageInfo")
-  expect_equal(x[[1]], "dplyr")
+  expect_equal(x[[1]], "base")
   options(op)
 })
 
