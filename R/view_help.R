@@ -1,14 +1,3 @@
-view_help_wrap <- function(body, alternative) {
-  tryCatch({
-    if (!isTRUE(is_override())) {
-      stop("rdocs not active")
-    }
-    view_help(body)
-  }, error = function(e) {
-    alternative
-  })
-}
-
 get_help_search_body <- function(paths) {
   lut <- c(alias = "aliases", concept = "concept", keyword = "keywords", name = "name", title = "title")
   body <- paths
