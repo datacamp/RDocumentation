@@ -33,6 +33,13 @@ test_that("help works", {
                                             topic = "asdf",
                                             called_function = "help"))
   )
+
+  # only specify package: fall back on normal behavior
+  op <- options(help_type = "text")
+  x <- help(package = "dplyr")
+  expect_equal(class(x), "packageInfo")
+  expect_equal(x[[1]], "dplyr")
+  options(op)
 })
 
 test_that("help.search works", {
