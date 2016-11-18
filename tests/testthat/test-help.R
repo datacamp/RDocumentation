@@ -34,12 +34,13 @@ test_that("help works", {
                                             called_function = "help"))
   )
 
-  # only specify package: fall back on normal behavior
-  op <- options(help_type = "text")
-  x <- help(package = "base")
-  expect_equal(class(x), "packageInfo")
-  expect_equal(x[[1]], "base")
-  options(op)
+  # Only package specified
+  with_mock(
+    view_help = identity,
+    expect_equal(help(package = "base"),
+                 list(called_function = "find_package",
+                      package_name = "base"))
+  )
 })
 
 test_that("help.search works", {

@@ -1,8 +1,14 @@
 rdocs_url <- "http://www.rdocumentation.org/"
-rdocs_dir <- file.path(system.file(package = "RDocumentation"), "doc")
-html_file <- file.path(rdocs_dir, "index.html")
-cred_path <- file.path(system.file(package = "RDocumentation"), "config", "creds.txt")
-  
+get_rdocs_dir <- function() {
+  file.path(system.file(package = "RDocumentation"), "doc")
+}
+get_html_file <- function() {
+  file.path(get_rdocs_dir(), "index.html")
+}
+get_cred_path <- function() {
+  file.path(system.file(package = "RDocumentation"), "config", "creds.txt")
+}
+
 #' Check if a package is installed for the user.
 #'
 #' @param pkg Name of the package
