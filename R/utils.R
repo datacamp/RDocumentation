@@ -9,6 +9,9 @@ get_cred_path <- function() {
   file.path(system.file(package = "RDocumentation"), "config", "creds.txt")
 }
 
+autoload_line_old <- "options(defaultPackages = c(getOption('defaultPackages'), 'RDocumentation'))"
+autoload_line <- paste("if(isTRUE('RDocumentation' %in% rownames(utils::installed.packages())))", autoload_line_old)
+
 #' Check if a package is installed for the user.
 #'
 #' @param pkg Name of the package
@@ -67,3 +70,36 @@ get_r_profile <- function(){
 concat <- function(x) {
   paste(x, collapse = ",")
 }
+
+is_in_profile <- function(targets) {
+  any(targets %in% readLines(get_r_profile()))
+}
+
+add_to_profile <- function(the_line, old_lines = "") {
+  rprofile <- get_r_profile()
+  lines <- readLines(rprofile)
+  # Keep all non-matching lines and append line
+  write(c(lines[!lines %in% c(the_line, old_lines)], the_line), file = rprofile)
+}
+
+remove_from_profile <- function(the_line, old_lines = "") {
+  rprofile <- get_r_profile()
+  lines <- readLines(rprofile)
+  # Keep all non-matching lines
+  write(lines[!lines %in% c(the_line, old_lines)], file = rprofile)
+}
+
+says_yes <- function(msg) {
+  yesses <- c("y", "yes", "yeah", "sure", "ok")
+  nos <- c("n", "no", "not", "nah", "none", "non")
+  resp <- ""
+  while (!(tolower(resp) %in% c(yesses, nos))) {
+    resp <- readline(msg)
+  }
+  if (tolower(resp) %in% c(yesses)) {
+    return(TRUE)
+  } else {
+    return(FALSE)
+  }
+}
+

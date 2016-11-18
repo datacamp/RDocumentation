@@ -1,6 +1,6 @@
 context("help")
 
-options(RDocs.override = TRUE)
+enable_rdocs()
 
 test_that("help works", {
   # package + topic exists: base::mean
@@ -88,5 +88,4 @@ test_that("help.search works", {
   )
 })
 
-disable_autoload()
-disable_override()
+disable_rdocs()
