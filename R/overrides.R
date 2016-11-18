@@ -49,12 +49,12 @@ help.search <- function(...) {
   get_help_wrap(get_help_search, paths)
 }
 
-get_help_wrap <- function(fun, ...) {
+get_help_wrap <- function(fun, paths, ...) {
   tryCatch({
     if (!isTRUE(is_override())) {
       stop("rdocs not active")
     }
-    fun(...)
+    fun(paths, ...)
   }, error = function(e) {
     paths
   })
