@@ -30,28 +30,15 @@ help <- function(...) {
       stop(e)
     }
   })
-  tryCatch({
-    if (!isTRUE(is_override())) {
-      stop("rdocs not active")
-    }
-    get_help(paths, package, topic)
-  }, error = function(e) {
-    paths
-  })
+  
+  get_help_wrap(get_help, paths, package = package, topic = topic)
 }
 
 #' @rdname documentation
 #' @export
 `?` <- function(...){
   paths <- utils::`?`(...)
-  tryCatch({
-    if (!isTRUE(is_override())) {
-      stop("rdocs not active")
-    }
-    get_help(paths)
-  }, error = function(e) {
-    paths
-  })
+  get_help_wrap(get_help, paths)
 }
 
 #' @rdname documentation
@@ -59,11 +46,15 @@ help <- function(...) {
 #' @importFrom utils help.search
 help.search <- function(...) {
   paths <- utils::help.search(...)
+  get_help_wrap(get_help_search, paths)
+}
+
+get_help_wrap <- function(fun, ...) {
   tryCatch({
     if (!isTRUE(is_override())) {
       stop("rdocs not active")
     }
-    get_help_search(paths)
+    fun(...)
   }, error = function(e) {
     paths
   })

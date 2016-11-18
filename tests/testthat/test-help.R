@@ -15,7 +15,7 @@ test_that("help works", {
                                   topic = "mean",
                                   called_function = "help"))
   )
-  
+
   # package exists, but topic not in there: utils::mean
   with_mock(
     view_help = identity,
@@ -24,7 +24,7 @@ test_that("help works", {
                                          topic = "mean",
                                          called_function = "help"))
   )
-  
+
   # package nor topic exists: asdfasdf::asdf
   with_mock(
     view_help = identity,
@@ -54,7 +54,7 @@ test_that("help.search works", {
     expect_true(is.character(help.search("mean")$matching_titles)),
     expect_true(is.character(help.search("mean")$matching_packages))
   )
-  
+
   with_mock(
     view_help = identity,
     expect_true(is.list(help.search("help", fields= "title"))),
@@ -66,7 +66,7 @@ test_that("help.search works", {
     expect_true(is.character(help.search("help", fields = "title")$matching_titles)),
     expect_true(is.character(help.search("help", fields = "title")$matching_packages))
   )
-  
+
   with_mock(
     view_help = identity,
     expect_true(is.list(help.search("help", fields= c("title", "alias")))),
