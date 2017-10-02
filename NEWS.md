@@ -1,3 +1,8 @@
+# RDocumentation 0.8.1
+
+* Fix violation of cran policy
+* Various bugfixes
+
 # RDocumentation 0.8.0
 
 * Bugfixes

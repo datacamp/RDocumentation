@@ -8,10 +8,9 @@
 
 0 errors | 0 warnings | 0 notes
 
-Additional comments:
-- Bugfixes and more stability
-
 ## Additional comments
+
+Fix the violation of cran policy, the check of the package doesn't create a .RProfile anymore
 
 ## Downstream dependencies
 
