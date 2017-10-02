@@ -1,3 +1,7 @@
+# RDocumentation 0.8.0
+
+* Bugfixes
+
 # RDocumentation 0.7.1
 
 * Less invasive overrides
