@@ -7,7 +7,7 @@
 #' the package whenever you start R. When RDocumentation is loaded, it will automatically
 #' override the default help functionality with documentation from RDocumentation.org.
 #' 
-#' The autoloading is done by modyfing the .RProfile file that is in your working directory.
+#' The autoloading is done by modifying the .RProfile file that is in your working directory.
 #' 
 #' With \code{enable_autoload} and \code{disable_autoload} you can update the
 #' .RProfile file to enable or disable the automatic loading of RDocumentation
