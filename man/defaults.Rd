@@ -2,11 +2,11 @@
 % Please edit documentation in R/settings.R
 \name{defaults}
 \alias{defaults}
-\alias{disable_autoload}
-\alias{disable_rdocs}
 \alias{enable_autoload}
-\alias{enable_rdocs}
 \alias{makeDefault}
+\alias{disable_autoload}
+\alias{enable_rdocs}
+\alias{disable_rdocs}
 \title{Settings}
 \usage{
 enable_autoload()
@@ -35,4 +35,3 @@ With \code{enable_autoload} and \code{disable_autoload} you can update the
 when you start R. With \code{enable_rdocs} and \code{disable_rdocs} you can enable or 
 disable the overriding of the default help viewer.
 }
-

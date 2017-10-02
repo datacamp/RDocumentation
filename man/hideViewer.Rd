@@ -9,4 +9,3 @@ hideViewer()
 \description{
 Redirects the viewer to the RDocumentation help page.
 }
-

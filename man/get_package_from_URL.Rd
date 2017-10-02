@@ -12,4 +12,3 @@ get_package_from_URL(url)
 \description{
 Get package URL
 }
-
