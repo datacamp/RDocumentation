@@ -60,11 +60,8 @@ get_package_from_URL <- function(url){
 }
 
 get_r_profile <- function(){
-  if (!file.exists(file.path(Sys.getenv("HOME"),".Rprofile"))) {
-    file.create(file.path(Sys.getenv("HOME"), ".Rprofile"), quiet=TRUE)
-  }
   Rprofile <- file.path(Sys.getenv("HOME"), ".Rprofile")
-  return (Rprofile)
+  return (file(Rprofile, "w+"))
 }
 
 concat <- function(x) {
@@ -72,6 +69,9 @@ concat <- function(x) {
 }
 
 is_in_profile <- function(targets) {
+  if (!file.exists(file.path(Sys.getenv("HOME"),".Rprofile"))) {
+    return (FALSE)
+  }
   any(targets %in% readLines(get_r_profile()))
 }
 
@@ -83,6 +83,9 @@ add_to_profile <- function(the_line, old_lines = "") {
 }
 
 remove_from_profile <- function(the_line, old_lines = "") {
+  if (!file.exists(file.path(Sys.getenv("HOME"),".Rprofile"))) {
+    return ()
+  }
   rprofile <- get_r_profile()
   lines <- readLines(rprofile)
   # Keep all non-matching lines
