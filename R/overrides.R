@@ -59,7 +59,6 @@ help.search <- function(...) {
 
 with_override <- function(code, alternative) {
   tryCatch({
-    stopifnot(isTRUE(rdocs_active()))
     force(code)
   }, error = function(e) {
     force(alternative)

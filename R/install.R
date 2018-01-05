@@ -1,4 +1,5 @@
 utils::globalVariables("biocLite")
+
 #' Install a package from CRAN, BioConductor, or GitHub
 #'
 #' @param mypkg the name of the package you want to install
