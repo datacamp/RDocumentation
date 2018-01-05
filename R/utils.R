@@ -5,9 +5,6 @@ get_rdocs_dir <- function() {
 get_html_file <- function() {
   file.path(get_rdocs_dir(), "index.html")
 }
-get_cred_path <- function() {
-  file.path(system.file(package = "RDocumentation"), "config", "creds.txt")
-}
 
 autoload_line_old <- "options(defaultPackages = c(getOption('defaultPackages'), 'RDocumentation'))"
 autoload_line <- paste("if(isTRUE('RDocumentation' %in% rownames(utils::installed.packages())))", autoload_line_old)
