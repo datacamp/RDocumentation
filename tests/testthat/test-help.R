@@ -1,7 +1,5 @@
 context("help")
 
-enable_rdocs()
-
 test_that("help works", {
   # package + topic exists: base::mean
   with_mock(
@@ -87,5 +85,3 @@ test_that("help.search works", {
     .env = "RDocumentation"
   )
 })
-
-disable_rdocs()

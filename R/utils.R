@@ -5,9 +5,6 @@ get_rdocs_dir <- function() {
 get_html_file <- function() {
   file.path(get_rdocs_dir(), "index.html")
 }
-get_cred_path <- function() {
-  file.path(system.file(package = "RDocumentation"), "config", "creds.txt")
-}
 
 autoload_line_old <- "options(defaultPackages = c(getOption('defaultPackages'), 'RDocumentation'))"
 autoload_line <- paste("if(isTRUE('RDocumentation' %in% rownames(utils::installed.packages())))", autoload_line_old)
@@ -42,17 +39,12 @@ check_package <- function(pkg, version) {
 
 #' Redirects the viewer to the RDocumentation help page.
 #'
-#' @export
 #' @importFrom utils tail
 hideViewer <- function(){
   help(package = "RDocumentation")
 }
 
-#' Get package URL
-#' 
-#' @param url The url to get the package for
-#' 
-#' @export
+# Get package from url
 get_package_from_URL <- function(url){
   parsing <- substring(url, 18, nchar(url) - 18)
   parts <- strsplit(parsing, "/")

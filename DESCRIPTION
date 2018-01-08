@@ -10,7 +10,7 @@ Authors@R: c(
     )
 URL: https://www.rdocumentation.org, https://www.datacamp.com
 BugReports: https://github.com/datacamp/RDocumentation/issues
-Description: Wraps around the default help functionality in R. Instead of plain documentation files, documentation will now show up as it does on 'RDocumentation.org', a platform that shows R documentation from CRAN, GitHub and Bioconductor, together with informative stats to assess the package quality and possibilities to discuss packages.
+Description: Wraps around the default help functionality in R. Instead of plain documentation files, documentation will show up as it does on 'RDocumentation.org', a platform that shows R documentation from CRAN, GitHub and Bioconductor, together with informative stats to assess the package quality.
 License: GPL (>= 2)
 Imports:
   httr (>= 1.2.1),
