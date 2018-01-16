@@ -23,7 +23,7 @@ autoload_line <- paste("if(isTRUE('RDocumentation' %in% rownames(utils::installe
 #' }
 #' 
 #' @export
-#' @importFrom utils packageVersion
+#' @importFrom utils packageVersion installed.packages
 check_package <- function(pkg, version) {
   if (!(pkg %in% installed.packages()[ ,1])) {
     return (1)
