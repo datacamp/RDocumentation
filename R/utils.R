@@ -35,14 +35,6 @@ check_package <- function(pkg, version) {
   }
 }
 
-
-#' Redirects the viewer to the RDocumentation help page.
-#'
-#' @importFrom utils tail
-hideViewer <- function(){
-  help(package = "RDocumentation")
-}
-
 # Get package from url
 get_package_from_URL <- function(url){
   parsing <- substring(url, 18, nchar(url) - 18)

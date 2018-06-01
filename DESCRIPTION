@@ -1,14 +1,14 @@
 Package: RDocumentation
 Type: Package
-Title: Integrate R with \url{www.rdocumentation.org}
+Title: Integrate R with RDocumentation
 Version: 0.8.3
 Authors@R: c(
-    person("Ludovic", "Vannoorenberghe", email = "ludovic@datacamp.com", role = "cre"),
+    person("Ludovic", "Vannoorenberghe", email = "ludovic@datacamp.com", role = "ctb"),
     person("Jonathan", "Cornelissen", email = "jonathan@datacamp.com", role = "aut"),
     person("Hannes", "Buseyne", role = "ctb"),
-    person("Filip", "Schouwenaars", email = "filip@datacamp.com", role = "aut")
+    person("Filip", "Schouwenaars", email = "filip@datacamp.com", role = "cre")
     )
-URL: https://www.rdocumentation.org, https://www.datacamp.com
+URL: https://www.rdocumentation.org
 BugReports: https://github.com/datacamp/RDocumentation/issues
 Description: Wraps around the default help functionality in R. Instead of plain documentation files, documentation will show up as it does on \url{www.rdocumentation.org}, a platform that shows R documentation from CRAN, GitHub and Bioconductor, together with informative stats to assess the package quality.
 License: GPL (>= 2)

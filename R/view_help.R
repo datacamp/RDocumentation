@@ -9,6 +9,7 @@ get_help_search_body <- function(paths) {
   body
 }
 
+#' @importFrom utils tail
 get_help_body <- function(paths, package = "", topic = "") {
   if (!length(paths)) {
     # no documentation found locally, use specified package and topic names
