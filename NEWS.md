@@ -1,3 +1,7 @@
+# RDocumentation 0.8.3
+
+* Make the package work again with the https-only RDocumentation web app.
+
 # RDocumentation 0.8.1
 
 * Fix violation of cran policy
