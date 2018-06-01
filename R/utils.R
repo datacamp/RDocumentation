@@ -1,4 +1,3 @@
-rdocs_url <- "http://www.rdocumentation.org/"
 get_rdocs_dir <- function() {
   file.path(system.file(package = "RDocumentation"), "doc")
 }

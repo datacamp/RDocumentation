@@ -48,7 +48,7 @@ get_find_package_body <- function(package) {
 view_help <- function(body){
   # create doc directory if doesn't exist yet
   dir.create(get_rdocs_dir(), showWarnings = FALSE)
-  go_to_url <- paste0(rdocs_url, "rstudio/view?viewer_pane=1")
+  go_to_url <- "https://www.rdocumentation.org/rstudio/view?viewer_pane=1"
   resp <- POST(go_to_url,
                add_headers(Accept = "text/html"),
                user_agent("rstudio"),
